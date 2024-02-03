@@ -1,3 +1,5 @@
+import { ModeToggle } from '@/components/mode-toggle';
+import { ThemeProvider } from '@/components/theme-provider';
 import { auth } from '@/lib/auth';
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
@@ -21,7 +23,17 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProvider session={user}>{children}</SessionProvider>
+        <SessionProvider session={user}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ModeToggle />
+            {children}
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

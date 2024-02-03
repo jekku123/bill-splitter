@@ -1,5 +1,7 @@
 'use client';
 
+import FormButton from '@/components/ui/form-button';
+import { Input } from '@/components/ui/input';
 import { register } from '@/lib/actions';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -24,10 +26,10 @@ const RegisterForm = () => {
 
   return (
     <form action={registerAction}>
-      <input type="email" placeholder="email" name="email" className="text-black" />
-      <input type="password" placeholder="password" name="password" className="text-black" />
-      {/* <input type="password" placeholder="password again" name="passwordRepeat" /> */}
-      <button>Register</button>
+      <Input type="email" placeholder="email" name="email" />
+      <Input type="password" placeholder="password" name="password" />
+      {/* <Input type="password" placeholder="password again" name="passwordRepeat" /> */}
+      <FormButton>Register</FormButton>
       <Link href="/login">
         Have an account? <b>Login</b>
       </Link>

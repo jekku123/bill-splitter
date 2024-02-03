@@ -1,6 +1,7 @@
 'use server';
 
 import bcrypt from 'bcrypt';
+import { AuthError } from 'next-auth';
 import { signIn, signOut } from './auth';
 import { db } from './drizzle';
 import { users } from './drizzle/schema';
@@ -92,14 +93,16 @@ export async function login(prevState: any, formData: FormData) {
       status: 'success',
       error: undefined,
     };
-  } catch (error: any) {
-    if (error.message.includes('credentialssignin')) {
-      return {
-        status: 'error',
-        error: 'Invalid email or password',
-      };
+  } catch (err) {
+    if (err instanceof AuthError) {
+      if (err.message.includes('credentialssignin')) {
+        return {
+          status: 'error',
+          error: 'Invalid email or password',
+        };
+      }
     }
-    throw error;
+    throw err;
   }
 }
 

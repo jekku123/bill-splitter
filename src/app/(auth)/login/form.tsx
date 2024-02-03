@@ -1,5 +1,7 @@
 'use client';
 
+import FormButton from '@/components/ui/form-button';
+import { Input } from '@/components/ui/input';
 import { login } from '@/lib/actions';
 import { useFormState } from 'react-dom';
 
@@ -15,9 +17,9 @@ export default function LoginForm() {
     <div className="flex flex-col items-center">
       <h1 className="mb-4 text-4xl font-bold">Login</h1>
       <form action={formAction}>
-        <input type="email" name="email" placeholder="Email" className="text-black" />
-        <input type="password" name="password" placeholder="Password" className="text-black" />
-        <button>Login</button>
+        <Input type="email" name="email" placeholder="Email" />
+        <Input type="password" name="password" placeholder="Password" />
+        <FormButton>Login</FormButton>
       </form>
       {state?.error && <span className="text-red-500">{state?.error}</span>}
     </div>
