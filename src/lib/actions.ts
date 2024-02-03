@@ -88,21 +88,22 @@ export async function login(prevState: any, formData: FormData) {
       email,
       password,
     });
-
     return {
       status: 'success',
       error: undefined,
     };
   } catch (error: any) {
-    console.error(error);
-
-    if (error.message.includes('CredentialsSignin')) {
+    if (error.message.includes('credentialssignin')) {
       return {
         status: 'error',
         error: 'Invalid email or password',
       };
     }
-
     throw error;
   }
 }
+
+// function getErrorMessage(error: unknown) {
+//   if (error instanceof Error) return error.message;
+//   return String(error);
+// }

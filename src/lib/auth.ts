@@ -4,6 +4,22 @@ import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import { getUserByEmail } from './drizzle/data-access';
 
+const login = async (credentials: any) => {
+  try {
+    const user = await getUserByEmail(credentials?.email as string);
+
+    if (!user) throw new Error('Wrong credentials!');
+
+    const passwordCorrect = await compare((credentials?.password as string) || '', user?.password);
+    if (!passwordCorrect) throw new Error('Wrong credentials!');
+
+    return user;
+  } catch (err) {
+    console.log(err);
+    throw new Error('Failed to login!');
+  }
+};
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -23,25 +39,15 @@ export const {
       },
 
       async authorize(credentials, _req) {
-        const user = await getUserByEmail(credentials?.email as string);
-
-        if (!user) {
-          return null;
-        }
-
-        const passwordCorrect = await compare(
-          (credentials?.password as string) || '',
-          user?.password
-        );
-
-        if (passwordCorrect) {
+        try {
+          const user = await login(credentials);
           return {
             id: user.id.toString(),
             email: user.email,
           };
+        } catch (err) {
+          return null;
         }
-
-        return null;
       },
     }),
   ],
@@ -66,6 +72,7 @@ export const {
     //   }
     //   return true;
     // },
+
     ...authConfig.callbacks,
   },
 });
