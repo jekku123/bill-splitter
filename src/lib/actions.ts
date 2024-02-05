@@ -1,44 +1,56 @@
-'use server';
+"use server";
 
-import { RegisterFormValues } from '@/app/(auth)/register/form3';
-import bcrypt from 'bcrypt';
-import { AuthError } from 'next-auth';
-import { ZodError, z } from 'zod';
-import { signIn, signOut } from './auth';
-import { createUser, getUserByEmail } from './drizzle/data-access';
+import { LoginFormValues } from "@/app/(auth)/login/form";
+import { RegisterFormValues } from "@/app/(auth)/register/form";
+import bcrypt from "bcrypt";
+import { AuthError } from "next-auth";
+import { ZodError, z } from "zod";
+import { signIn, signOut } from "./auth";
+import { createUser, getUserByEmail } from "./drizzle/data-access";
 
 const registerFormSchema = z
   .object({
     email: z.string().email({
-      message: 'Please enter a valid email address',
+      message: "Please enter a valid email address",
     }),
     password: z.string().min(3, {
-      message: 'Please enter a password with at least 3 characters',
+      message: "Please enter a password with at least 3 characters",
     }),
     confirmPassword: z.string().min(1, {
-      message: 'Please confirm your password',
+      message: "Please confirm your password",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'],
+    path: ["confirmPassword"],
   });
 
 const registerFormSchema2 = z
   .object({
-    email: z.string().email({
-      message: 'Please enter a valid email address',
-    }),
+    email: z
+      .string()
+      .email({
+        message: "Please enter a valid email address",
+      })
+      .refine(
+        async (email) => {
+          const userExists = await getUserByEmail(email);
+          return !userExists;
+        },
+        {
+          message: "An account with that email already exists",
+        },
+      ),
     password: z.string().min(1, {
-      message: 'Please enter a password',
+      message: "Please enter a password",
     }),
     confirmPassword: z.string().min(1, {
-      message: 'Please confirm your password',
+      message: "Please confirm your password",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'],
+    path: ["confirmPassword"],
   });
 
 export type RegisterFormSchema = z.infer<typeof registerFormSchema>;
@@ -57,9 +69,9 @@ export async function register(_previousState: any, formData: FormData) {
 
     if (userExists) {
       return {
-        status: 'error',
+        status: "error",
         errors: {
-          message: 'An account with that email already exists',
+          message: "An account with that email already exists",
         },
       };
     }
@@ -70,7 +82,7 @@ export async function register(_previousState: any, formData: FormData) {
     await createUser({ email, password: hashedPassword });
 
     return {
-      status: 'success',
+      status: "success",
       errors: undefined,
     };
   } catch (error) {
@@ -79,40 +91,41 @@ export async function register(_previousState: any, formData: FormData) {
       const errorMap = zodError.flatten().fieldErrors;
 
       return {
-        status: 'error',
+        status: "error",
         errors: {
-          email: errorMap['email']?.[0] ?? '',
-          password: errorMap['password']?.[0] ?? '',
-          confirmPassword: errorMap['confirmPassword']?.[0] ?? '',
+          email: errorMap["email"]?.[0] ?? "",
+          password: errorMap["password"]?.[0] ?? "",
+          confirmPassword: errorMap["confirmPassword"]?.[0] ?? "",
         },
       };
     }
     return {
-      status: 'error',
+      status: "error",
       errors: {
-        message: 'Could not register user at this time. Please try again later.',
+        message:
+          "Could not register user at this time. Please try again later.",
       },
     };
   }
 }
 
 export const githubLogin = async () => {
-  await signIn('github');
+  await signIn("github");
 };
 
 export async function login(_prevState: any, formData: FormData) {
   try {
-    await signIn('credentials', formData);
+    await signIn("credentials", formData);
     return {
-      status: 'success',
+      status: "success",
       error: undefined,
     };
   } catch (err) {
     if (err instanceof AuthError) {
-      if (err.type === 'CredentialsSignin') {
+      if (err.type === "CredentialsSignin") {
         return {
-          status: 'error',
-          error: 'Invalid email or password',
+          status: "error",
+          error: "Invalid email or password",
         };
       }
     }
@@ -141,18 +154,39 @@ export async function registerUser(fields: RegisterFormValues) {
       return {
         success: false,
         errors: {
-          email: errorMap['email']?.[0] ?? '',
-          password: errorMap['password']?.[0] ?? '',
-          confirmPassword: errorMap['confirmPassword']?.[0] ?? '',
+          email: errorMap["email"]?.[0] ?? "",
+          password: errorMap["password"]?.[0] ?? "",
+          confirmPassword: errorMap["confirmPassword"]?.[0] ?? "",
         },
       };
     }
     return {
       success: false,
       errors: {
-        message: 'Could not register user at this time. Please try again later.',
+        message:
+          "Could not register user at this time. Please try again later.",
       },
     };
+  }
+}
+
+export async function loginUser(fields: LoginFormValues) {
+  try {
+    await signIn("credentials", fields);
+    return {
+      success: true,
+      error: undefined,
+    };
+  } catch (err) {
+    if (err instanceof AuthError) {
+      if (err.type === "CredentialsSignin") {
+        return {
+          success: false,
+          error: "Invalid email or password",
+        };
+      }
+    }
+    throw err;
   }
 }
 

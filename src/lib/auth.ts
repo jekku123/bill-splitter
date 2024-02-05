@@ -1,8 +1,9 @@
-import Credentials from '@auth/core/providers/credentials';
-import { compare } from 'bcrypt';
-import NextAuth from 'next-auth';
-import { authConfig } from './auth.config';
-import { getUserByEmail } from './drizzle/data-access';
+import Credentials from "@auth/core/providers/credentials";
+import GitHub from "@auth/core/providers/github";
+import { compare } from "bcrypt";
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
+import { createUser, getUserByEmail } from "./drizzle/data-access";
 
 export const {
   handlers: { GET, POST },
@@ -12,10 +13,10 @@ export const {
 } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
-    // GitHub({
-    //   clientId: process.env.AUTH_GITHUB_ID,
-    //   clientSecret: process.env.AUTH_GITHUB_SECRET,
-    // }),
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID,
+      clientSecret: process.env.AUTH_GITHUB_SECRET,
+    }),
     Credentials({
       credentials: {
         email: {},
@@ -30,8 +31,8 @@ export const {
         }
 
         const passwordCorrect = await compare(
-          (credentials?.password as string) || '',
-          user?.password
+          (credentials?.password as string) || "",
+          user?.password,
         );
 
         if (passwordCorrect) {
@@ -46,26 +47,26 @@ export const {
     }),
   ],
   callbacks: {
-    // async signIn({ user, account, profile }) {
-    //   if (account?.provider === 'github') {
-    //     try {
-    //       const user = await getUserByEmail(profile?.email!);
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "github") {
+        try {
+          const user = await getUserByEmail(profile?.email!);
 
-    //       if (!user) {
-    //         const newUser = {
-    //           email: profile?.email!,
-    //           password: 'github user',
-    //         };
+          if (!user) {
+            const newUser = {
+              email: profile?.email!,
+              password: "github user",
+            };
 
-    //         await db.insert(users).values(newUser);
-    //       }
-    //     } catch (err) {
-    //       console.log(err);
-    //       return false;
-    //     }
-    //   }
-    //   return true;
-    // },
+            await createUser(newUser);
+          }
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      }
+      return true;
+    },
     ...authConfig.callbacks,
   },
 });

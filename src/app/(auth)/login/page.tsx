@@ -1,12 +1,9 @@
-import LoginForm from './form';
+import { LoginForm } from "./form";
 
 export default function LoginPage() {
   return (
-    <main className="flex flex-col p-24">
+    <div className="flex grow items-center justify-center">
       <LoginForm />
-      {/* <form action={githubLogin}>
-        <FormButton>Login with Github</FormButton>
-      </form> */}
-    </main>
+    </div>
   );
 }
