@@ -21,6 +21,11 @@ export default function LoginForm() {
         <Input type="password" name="password" placeholder="Password" />
         <FormButton>Login</FormButton>
       </form>
+      {/* <form action={githubLogin}>
+        <FormButton size="icon" variant="ghost">
+          <Icons.gitHub />
+        </FormButton>
+      </form> */}
       {state?.error && <span className="text-red-500">{state?.error}</span>}
     </div>
   );

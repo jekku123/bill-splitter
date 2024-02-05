@@ -1,8 +1,6 @@
-'use server';
-
 import { eq } from 'drizzle-orm';
 import { db } from '.';
-import { users } from './schema';
+import { NewUser, users } from './schema';
 
 export async function getUserByEmail(email: string) {
   try {
@@ -11,7 +9,17 @@ export async function getUserByEmail(email: string) {
     });
     return user;
   } catch (error) {
-    console.error(error);
-    return null;
+    console.error('Error occurred while trying to find user by email in data-access.ts', error);
+    throw error;
+  }
+}
+
+export async function createUser(user: NewUser) {
+  try {
+    const newUser = await db.insert(users).values(user);
+    return newUser;
+  } catch (error) {
+    console.error('Error occurred while trying to create a new user in data-access.ts', error);
+    throw error;
   }
 }

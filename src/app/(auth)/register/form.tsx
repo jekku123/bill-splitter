@@ -13,7 +13,7 @@ const initialState = {
   errors: undefined,
 };
 
-const RegisterForm = () => {
+export default function RegisterForm() {
   const [state, registerAction] = useFormState(register, initialState);
 
   const router = useRouter();
@@ -27,14 +27,16 @@ const RegisterForm = () => {
   return (
     <form action={registerAction}>
       <Input type="email" placeholder="email" name="email" />
+      {state?.errors?.email && <p>{state?.errors?.email}</p>}
       <Input type="password" placeholder="password" name="password" />
-      {/* <Input type="password" placeholder="password again" name="passwordRepeat" /> */}
+      {state?.errors?.password && <p>{state?.errors?.password}</p>}
+      <Input type="password" placeholder="password again" name="confirmPassword" />
+      {state?.errors?.confirmPassword && <p>{state?.errors?.confirmPassword}</p>}
       <FormButton>Register</FormButton>
       <Link href="/login">
         Have an account? <b>Login</b>
       </Link>
+      {state?.errors?.message && <p>{state?.errors?.message}</p>}
     </form>
   );
-};
-
-export default RegisterForm;
+}

@@ -33,7 +33,14 @@ export const authConfig = {
         return Response.redirect(new URL('/', request.nextUrl));
       }
 
-      return true;
+      // ALLOW UNAUTHENTICATED USERS TO REACH THE REGISTER AND LOGIN PAGE
+
+      if (isOnLoginPage || isOnRegisterPage) {
+        return true;
+      }
+
+      // ONLY AUTHENTICATED USERS CAN REACH REST OF THE APPLICATION
+      return !!user;
     },
   },
   session: {
