@@ -1,3 +1,5 @@
+"use server";
+
 import { and, eq } from "drizzle-orm";
 import { db } from ".";
 import {
@@ -64,7 +66,6 @@ export async function getUserGroups(userId: string) {
 
 export async function insertGroup(group: NewGroup) {
   try {
-    console.log(group);
     return await db.insert(groups).values(group).returning();
   } catch (error) {
     console.error(
@@ -75,12 +76,9 @@ export async function insertGroup(group: NewGroup) {
   }
 }
 
-export async function deleteGroup({ groupId }: { groupId: string }) {
+export async function deleteGroup(groupId: number) {
   try {
-    return await db
-      .delete(groups)
-      .where(eq(groups.id, parseInt(groupId)))
-      .returning();
+    return await db.delete(groups).where(eq(groups.id, groupId)).returning();
   } catch (error) {
     console.error(
       "Error occurred while trying to delete a group in data-access.ts",
@@ -90,7 +88,9 @@ export async function deleteGroup({ groupId }: { groupId: string }) {
   }
 }
 
-export async function insertGroupMember({ userId, groupId }: NewGroupMember) {
+export async function insertGroupMember(member: NewGroupMember) {
+  const { userId, groupId } = member;
+
   try {
     return await db
       .insert(groupMembers)
@@ -105,12 +105,12 @@ export async function insertGroupMember({ userId, groupId }: NewGroupMember) {
   }
 }
 
-export async function getGroupMembers(groupId: string) {
+export async function getGroupMembers(groupId: number) {
   try {
     const result = await db
       .select()
       .from(groupMembers)
-      .where(eq(groupMembers.groupId, parseInt(groupId)));
+      .where(eq(groupMembers.groupId, groupId));
 
     if (!result.at(0)) {
       return null;
@@ -125,7 +125,9 @@ export async function getGroupMembers(groupId: string) {
   }
 }
 
-export async function deleteGroupMember({ userId, groupId }: GroupMember) {
+export async function deleteGroupMember(member: GroupMember) {
+  const { userId, groupId } = member;
+
   try {
     return await db
       .delete(groupMembers)
@@ -142,12 +144,9 @@ export async function deleteGroupMember({ userId, groupId }: GroupMember) {
   }
 }
 
-export async function getGroupById(groupId: string) {
+export async function getGroupById(groupId: number) {
   try {
-    const group = await db
-      .select()
-      .from(groups)
-      .where(eq(groups.id, parseInt(groupId)));
+    const group = await db.select().from(groups).where(eq(groups.id, groupId));
 
     if (!group.at(0)) {
       return null;
@@ -163,12 +162,9 @@ export async function getGroupById(groupId: string) {
   }
 }
 
-export async function getGroupBills(groupId: string) {
+export async function getGroupBills(groupId: number) {
   try {
-    const result = await db
-      .select()
-      .from(groups)
-      .where(eq(groups.id, parseInt(groupId)));
+    const result = await db.select().from(groups).where(eq(groups.id, groupId));
 
     if (!result.at(0)) {
       return null;

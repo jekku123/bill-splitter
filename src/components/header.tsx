@@ -23,7 +23,6 @@ export default async function Header() {
         <h1 className="text-2xl font-bold">Bill Splitter</h1>
         <MainNav />
         <div className="flex items-center space-x-4">
-          <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger>
               {session && (
@@ -36,7 +35,7 @@ export default async function Header() {
               )}
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="mt-4">
+            <DropdownMenuContent align="end">
               <DropdownMenuLabel>My account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Profile</DropdownMenuItem>
@@ -50,6 +49,7 @@ export default async function Header() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ModeToggle />
         </div>
       </div>
     </header>

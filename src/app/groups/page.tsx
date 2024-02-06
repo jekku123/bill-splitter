@@ -1,4 +1,4 @@
-import { CreateGroupDialog } from "@/components/create-group";
+import CreateGroupDialog from "@/components/create-group";
 import { auth } from "@/lib/auth";
 import { getUserGroups } from "@/lib/drizzle/data-access";
 import GroupCard from "../../components/group-card";

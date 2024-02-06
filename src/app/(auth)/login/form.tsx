@@ -3,7 +3,6 @@
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { loginUser } from "@/lib/actions";
 
 import {
   Card,
@@ -27,6 +26,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import GitHubLogin from "@/components/ui/github-login";
+import { login } from "@/lib/actions";
 import { z } from "zod";
 
 const defaultValues = {
@@ -55,7 +55,7 @@ export function LoginForm() {
 
   async function onSubmit(values: LoginFormValues) {
     try {
-      const result = await loginUser(values);
+      const result = await login(values);
 
       if (!result.success) {
         setGeneralError(result.error as string);

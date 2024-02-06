@@ -50,10 +50,11 @@ export const {
     async signIn({ user, account, profile }) {
       if (account?.provider === "github") {
         try {
-          const user = await getUserByEmail(profile?.email!);
+          const isUser = await getUserByEmail(profile?.email!);
 
-          if (!user) {
+          if (!isUser) {
             const newUser = {
+              id: Number(profile?.id),
               email: profile?.email!,
               password: "github user",
             };

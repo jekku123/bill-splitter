@@ -5,7 +5,7 @@ export default async function GroupPage({
 }: {
   params: { slug: string };
 }) {
-  const group = await getGroupById(params.slug);
+  const group = await getGroupById(Number(params.slug));
 
   if (!group) {
     return null;

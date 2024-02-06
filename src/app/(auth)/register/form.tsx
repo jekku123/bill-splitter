@@ -20,7 +20,8 @@ import {
 } from "@/components/ui/form";
 import GitHubLogin from "@/components/ui/github-login";
 import { Input } from "@/components/ui/input";
-import { registerUser } from "@/lib/actions";
+import { register } from "@/lib/actions";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -71,7 +72,7 @@ export default function RegisterForm() {
   const router = useRouter();
 
   async function onSubmit(values: RegisterFormValues) {
-    const result = await registerUser(values);
+    const result = await register(values);
 
     if (result.errors) {
       const errors = result.errors;

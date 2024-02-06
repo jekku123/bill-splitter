@@ -1,6 +1,5 @@
 "use client";
 
-import { createGroup } from "@/lib/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User } from "next-auth";
 import { useForm } from "react-hook-form";
@@ -44,7 +43,9 @@ const groupFormSchema = z.object({
 
 export type GroupFormValues = z.infer<typeof groupFormSchema>;
 
-export default function CreateGroupForm({ user }: { user: User }) {
+export default function CreateGroupDialog({ user }: { user: User }) {
+  const [open, setOpen] = useState(false);
+
   const form = useForm<GroupFormValues>({
     resolver: zodResolver(groupFormSchema),
     defaultValues: {
@@ -54,17 +55,21 @@ export default function CreateGroupForm({ user }: { user: User }) {
   });
 
   const {
-    register,
     control,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = form;
 
   async function onSubmit(values: GroupFormValues) {
     const result = await createGroup(user.id!, values);
-    console.log(result);
 
+    if (!result.success) {
+      toast("Failed to create group", {});
+    }
+
+    toast("Group created", {});
+
+    setOpen(false);
     // if (result.errors) {
     //   const errors = result.errors;
     //   if (errors.name) {
@@ -82,67 +87,82 @@ export default function CreateGroupForm({ user }: { user: User }) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-        <FormField
-          control={control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="grid grid-cols-4 items-center gap-4">
-              <FormLabel className="text-right">Name</FormLabel>
-              <FormControl>
-                <Input
-                  className={cn(
-                    "col-span-3",
-                    !!errors.name
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : "",
-                  )}
-                  autoFocus
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="description"
-          render={({ field }) => (
-            <FormItem className="grid grid-cols-4 items-center gap-4">
-              <FormLabel className="text-right">Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  className={cn(
-                    "col-span-3 resize-none",
-                    !!errors.description
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : "",
-                  )}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex w-full justify-end gap-4">
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
-          <Button
-            variant="secondary"
-            type="submit"
-            disabled={isSubmitting}
-            aria-disabled={isSubmitting}
-          >
-            Create group
-            {isSubmitting && <Icons.spinner className="ml-2 animate-spin" />}
-          </Button>
-        </div>
-      </form>
-    </Form>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline">Create Group</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+          <DialogDescription>
+            Make changes to your profile here. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+            <FormField
+              control={control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-4 items-center gap-4">
+                  <FormLabel className="text-right">Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      className={cn(
+                        "col-span-3",
+                        !!errors.name
+                          ? "border-destructive focus-visible:ring-destructive"
+                          : "",
+                      )}
+                      autoFocus
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-4 items-center gap-4">
+                  <FormLabel className="text-right">Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className={cn(
+                        "col-span-3 resize-none",
+                        !!errors.description
+                          ? "border-destructive focus-visible:ring-destructive"
+                          : "",
+                      )}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex w-full justify-end gap-4">
+              <Button
+                variant="default"
+                type="submit"
+                disabled={isSubmitting}
+                aria-disabled={isSubmitting}
+              >
+                Create group
+                {isSubmitting && (
+                  <Icons.spinner className="ml-2 animate-spin" />
+                )}
+              </Button>
+              <DialogClose asChild>
+                <Button variant="secondary">Cancel</Button>
+              </DialogClose>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -154,23 +174,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { createGroup } from "@/lib/drizzle/actions/group";
 import { DialogClose } from "@radix-ui/react-dialog";
-
-export function CreateGroupDialog({ user }: { user: User }) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Create Group</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <CreateGroupForm user={user} />
-      </DialogContent>
-    </Dialog>
-  );
-}
+import { useState } from "react";
+import { toast } from "sonner";

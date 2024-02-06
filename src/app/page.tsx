@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
+import Link from "next/link";
 
 export default async function Home() {
   const session = await auth();
@@ -13,7 +14,9 @@ export default async function Home() {
       <p className="text-2xl">
         The app that helps you split bills with your friends
       </p>
-      <Button>Create group</Button>
+      <Button asChild>
+        <Link href="/groups">View groups</Link>
+      </Button>
     </div>
   );
 }
