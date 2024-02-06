@@ -1,6 +1,7 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
@@ -36,6 +37,7 @@ export default async function RootLayout({
               <main className="mx-auto flex w-full max-w-5xl grow overflow-hidden px-6 py-4">
                 {children}
               </main>
+              <Toaster />
               <Footer />
             </div>
           </ThemeProvider>

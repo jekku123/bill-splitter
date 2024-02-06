@@ -2,11 +2,20 @@
 
 import { LoginFormValues } from "@/app/(auth)/login/form";
 import { RegisterFormValues } from "@/app/(auth)/register/form";
+import { GroupFormValues } from "@/components/create-group";
 import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
+import { revalidatePath } from "next/cache";
 import { ZodError, z } from "zod";
 import { signIn, signOut } from "./auth";
-import { createUser, getUserByEmail } from "./drizzle/data-access";
+import {
+  createUser,
+  deleteGroup,
+  getUserByEmail,
+  insertGroup,
+  insertGroupMember,
+} from "./drizzle/data-access";
+import { NewGroup, NewGroupMember } from "./drizzle/schema";
 
 const registerFormSchema = z
   .object({
@@ -172,8 +181,9 @@ export async function registerUser(fields: RegisterFormValues) {
 
 export async function loginUser(fields: LoginFormValues) {
   try {
-    await signIn("credentials", fields);
+    const user = await signIn("credentials", fields);
     return {
+      user: user,
       success: true,
       error: undefined,
     };
@@ -210,6 +220,70 @@ function getZodErrors(fields: RegisterFormValues) {
     return {
       success: true,
       errors: undefined,
+    };
+  }
+}
+
+export async function createGroup(userId: string, values: GroupFormValues) {
+  const newGroup: NewGroup = {
+    createdBy: parseInt(userId),
+    name: values.name,
+    description: values.description,
+  };
+
+  const group = await insertGroup(newGroup);
+
+  if (!group) {
+    return {
+      success: false,
+      errors: {
+        message: "Could not create group at this time. Please try again later.",
+      },
+    };
+  }
+
+  revalidatePath("/groups");
+
+  return {
+    success: true,
+    errors: undefined,
+  };
+}
+
+export async function removeGroup({ groupId }: { groupId: string }) {
+  try {
+    await deleteGroup({ groupId });
+    return {
+      success: true,
+      errors: undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      errors: {
+        message: "Could not delete group at this time. Please try again later.",
+      },
+    };
+  }
+}
+
+export async function addGroupMember({ userId, groupId }: NewGroupMember) {
+  try {
+    const newGroupMember = await insertGroupMember({ userId, groupId });
+
+    console.log(newGroupMember);
+
+    return {
+      success: true,
+      errors: undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      errors: {
+        message:
+          "Could not add user to group at this time. Please try again later.",
+      },
     };
   }
 }

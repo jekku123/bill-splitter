@@ -1,8 +1,8 @@
-import { NextAuthConfig } from 'next-auth';
+import { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -20,17 +20,18 @@ export const authConfig = {
     },
     authorized({ auth, request }) {
       const user = auth?.user;
-      const isOnLoginPage = request.nextUrl?.pathname.startsWith('/login');
-      const isOnRegisterPage = request.nextUrl?.pathname.startsWith('/register');
+      const isOnLoginPage = request.nextUrl?.pathname.startsWith("/login");
+      const isOnRegisterPage =
+        request.nextUrl?.pathname.startsWith("/register");
 
       // ONLY UNAUTHENTICATED USERS CAN REACH THE REGISTER AND LOGIN PAGE
 
       if (isOnLoginPage && user) {
-        return Response.redirect(new URL('/', request.nextUrl));
+        return Response.redirect(new URL("/", request.nextUrl));
       }
 
       if (isOnRegisterPage && user) {
-        return Response.redirect(new URL('/', request.nextUrl));
+        return Response.redirect(new URL("/", request.nextUrl));
       }
 
       // ALLOW UNAUTHENTICATED USERS TO REACH THE REGISTER AND LOGIN PAGE
@@ -44,7 +45,7 @@ export const authConfig = {
     },
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   providers: [],
 } satisfies NextAuthConfig;

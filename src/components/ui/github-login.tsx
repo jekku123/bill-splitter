@@ -9,6 +9,8 @@ import { Button } from "./button";
 export default function GitHubLogin() {
   const { pending } = useFormStatus();
 
+  console.log(pending);
+
   return (
     <form action={githubLogin}>
       <Button
