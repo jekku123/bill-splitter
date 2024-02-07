@@ -93,9 +93,9 @@ export default function CreateGroupDialog({ user }: { user: User }) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Create Group</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Add a new group to keep track of the debts between friends.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -150,7 +150,7 @@ export default function CreateGroupDialog({ user }: { user: User }) {
                 disabled={isSubmitting}
                 aria-disabled={isSubmitting}
               >
-                Create group
+                Save
                 {isSubmitting && (
                   <Icons.spinner className="ml-2 animate-spin" />
                 )}

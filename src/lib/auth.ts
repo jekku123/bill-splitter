@@ -3,7 +3,7 @@ import GitHub from "@auth/core/providers/github";
 import { compare } from "bcrypt";
 import NextAuth from "next-auth";
 import { authConfig } from "./auth.config";
-import { createUser, getUserByEmail } from "./drizzle/data-access";
+import { getUserByEmail, insertUser } from "./drizzle/data-access2";
 
 export const {
   handlers: { GET, POST },
@@ -59,7 +59,7 @@ export const {
               password: "github user",
             };
 
-            await createUser(newUser);
+            await insertUser(newUser);
           }
         } catch (err) {
           console.log(err);

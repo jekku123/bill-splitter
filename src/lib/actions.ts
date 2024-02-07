@@ -6,7 +6,13 @@ import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
 import { ZodError, z } from "zod";
 import { signIn, signOut } from "./auth";
-import { createUser, getUserByEmail } from "./drizzle/data-access";
+import {
+  getUserByEmail,
+  insertBill,
+  insertGroupMember,
+  insertUser,
+} from "./drizzle/data-access2";
+import { NewBill, NewGroupMember } from "./drizzle/schema";
 
 const registerFormSchema = z
   .object({
@@ -53,7 +59,7 @@ export async function register(fields: RegisterFormValues) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await createUser({ email, password: hashedPassword });
+    await insertUser({ email, password: hashedPassword });
 
     return {
       success: true,
@@ -117,4 +123,55 @@ function getZodErrors(zodErrors: any) {
   return {
     errors: "gg",
   };
+}
+
+export async function addGroupMember(member: NewGroupMember) {
+  try {
+    const newGroupMember = await insertGroupMember({
+      groupId: member.groupId,
+      userId: member.userId,
+      username: member.username,
+    });
+
+    if (!newGroupMember) {
+      return {
+        success: false,
+        error:
+          "Could not add group member at this time. Please try again later.",
+      };
+    }
+
+    return {
+      success: true,
+      error: undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Could not add group member at this time. Please try again later.",
+    };
+  }
+}
+
+export async function createBill(bill: NewBill) {
+  try {
+    const newBill = await insertBill(bill);
+
+    if (!newBill) {
+      return {
+        success: false,
+        error: "Could not create bill at this time. Please try again later.",
+      };
+    }
+
+    return {
+      success: true,
+      error: undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Could not create bill at this time. Please try again later.",
+    };
+  }
 }

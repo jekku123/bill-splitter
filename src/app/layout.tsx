@@ -34,7 +34,7 @@ export default async function RootLayout({
           >
             <div className="flex min-h-screen flex-col">
               <Header />
-              <main className="mx-auto flex w-full max-w-5xl grow overflow-hidden px-6 py-4">
+              <main className="mx-auto flex w-full max-w-5xl grow px-6 py-4">
                 {children}
               </main>
               <Toaster />

@@ -1,4 +1,5 @@
 import {
+  decimal,
   integer,
   pgTable,
   serial,
@@ -25,15 +26,14 @@ export const users = pgTable(
 export const groups = pgTable("groups", {
   id: serial("id").primaryKey(),
   createdBy: integer("createdBy").references(() => users.id),
-  name: text("name").notNull(),
+  title: text("title").notNull(),
   description: text("description").notNull(),
 });
 
 export const groupMembers = pgTable("group_members", {
   id: serial("id").primaryKey(),
-  userId: integer("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  username: text("username").notNull(),
+  userId: integer("userId").references(() => users.id),
   groupId: integer("groupId")
     .notNull()
     .references(() => groups.id, { onDelete: "cascade" }),
@@ -46,9 +46,21 @@ export const bills = pgTable("bills", {
     .references(() => groups.id, { onDelete: "cascade" }),
   payerId: integer("payerId")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => groupMembers.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
   description: text("description").notNull(),
   amount: text("amount").notNull(),
+});
+
+export const payments = pgTable("payments", {
+  id: serial("id").primaryKey(),
+  billId: integer("billId")
+    .notNull()
+    .references(() => bills.id, { onDelete: "cascade" }),
+  payerId: integer("payerId")
+    .notNull()
+    .references(() => groupMembers.id, { onDelete: "cascade" }),
+  amount: decimal("amount").notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -59,3 +71,5 @@ export type GroupMember = typeof groupMembers.$inferSelect;
 export type NewGroupMember = typeof groupMembers.$inferInsert;
 export type Bill = typeof bills.$inferSelect;
 export type NewBill = typeof bills.$inferInsert;
+export type Payment = typeof payments.$inferSelect;
+export type NewPayment = typeof payments.$inferInsert;
