@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -29,6 +30,7 @@ import { cn } from "@/lib/utils";
 
 import { GroupData } from "@/lib/drizzle/data-access2";
 import { Plus, X } from "lucide-react";
+import { toast } from "sonner";
 import { z } from "zod";
 import {
   Select,
@@ -39,28 +41,48 @@ import {
 } from "./ui/select";
 import { Separator } from "./ui/separator";
 import { Textarea } from "./ui/textarea";
+import { createBill } from "@/lib/actions";
 
-const billFormSchema = z.object({
-  title: z
-    .string()
-    .min(1, {
-      message: "Please enter a name",
-    })
-    .min(3, { message: "Name must be at least 3 characters" })
-    .max(20, {
-      message: "Name must be less than 30 characters",
-    }),
-  description: z.string().min(1, { message: "Please enter a description" }),
-  amount: z.string().min(1, { message: "Please enter an amount" }),
-  paidBy: z.string().min(1, { message: "Please enter a name" }),
-  shares: z.array(
-    z.object({
-      userId: z.number(),
-      amount: z.number().min(1, { message: "Please enter an amount" }),
-    }),
-  ),
-});
+const billFormSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1, {
+        message: "Please enter a name",
+      })
+      .min(3, { message: "Name must be at least 3 characters" })
+      .max(20, {
+        message: "Name must be less than 30 characters",
+      }),
+    description: z.string().min(1, { message: "Please enter a description" }),
+    amount: z.string().min(1, { message: "Please enter an amount" }),
+    payments: z.array(
+      z.object({
+        payerId: z.string(),
+        amount: z.string().min(1, { message: "Please enter an amount" }),
+      }),
+    ),
+    shares: z.array(
+      z.object({
+        groupMemberId: z.string(),
+        amount: z.string().min(1, { message: "Please enter an amount" }),
+      }),
+    ),
+  })
+  .refine(
+    (data) => {
+      const totalShares = data.shares.reduce(
+        (acc, share) => acc + parseFloat(share.amount),
+        0,
+      );
 
+      return totalShares === parseFloat(data.amount);
+    },
+    {
+      message: "Total payments must be equal to the amount",
+      path: ["amount"],
+    },
+  );
 export type BillFormValues = z.infer<typeof billFormSchema>;
 
 export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
@@ -73,7 +95,7 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
       title: "",
       description: "",
       amount: "",
-      paidBy: "",
+      payments: [],
       shares: [],
     },
   });
@@ -81,39 +103,56 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
   const {
     reset,
     watch,
-    register,
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
 
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes from useForm (optional: if you are using FormContext)
-      name: "shares", // unique name for your Field Array
-    },
-  );
+  const {
+    fields: paymentFields,
+    append: appendPayment,
+    remove: removePayment,
+  } = useFieldArray({
+    control,
+    name: "payments",
+  });
+
+  const {
+    fields: shareFields,
+    append: appendShare,
+    remove: removeShare,
+  } = useFieldArray({
+    control,
+    name: "shares",
+  });
 
   async function onSubmit(values: BillFormValues) {
-    console.log("VALUES:", values);
+    console.log(values);
 
-    // const username = values.username;
+    const newBill: BillFormValues = {
+      title: values.title,
+      description: values.description,
+      amount: values.amount,
+      payments: values.payments,
+      shares: values.shares,
+    };
 
-    // const result = await addGroupMember({ username, groupId });
+    const groupId = group?.id!;
 
-    // if (!result.success) {
-    //   toast("Failed to add member", {});
-    // }
+    const result = await createBill(newBill, groupId);
 
-    // toast("Member added", {});
-    // setOpen(false);
+    if (!result.success) {
+      toast("Failed to add bill", {});
+    }
+
+    toast("Bill added", {
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
+    setOpen(false);
   }
-
-  console.log(watch());
-
-  const sharers2 = members.filter((member) => {
-    return watch().paidBy !== member.username;
-  });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -126,7 +165,9 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Add Bill</DialogTitle>
-          {/* <DialogDescription>Add a bill!</DialogDescription> */}
+          <DialogDescription>
+            Add a bill to group {group?.title}
+          </DialogDescription>
         </DialogHeader>
         <Separator />
         <Form {...form}>
@@ -202,54 +243,20 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
                 </FormItem>
               )}
             />
-            <FormField
-              control={control}
-              name="paidBy"
-              render={({ field }) => (
-                <FormItem className="flex flex-col items-center">
-                  <div className="grid w-full grid-cols-4 items-center gap-4">
-                    <FormLabel className="text-right">Paidby</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger
-                          className={cn(
-                            "col-span-3",
-                            !!errors.paidBy
-                              ? "border-destructive bg-red-400 focus-visible:ring-destructive"
-                              : "",
-                          )}
-                        >
-                          <SelectValue placeholder="Choose payer" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {members.map((member) => (
-                          <SelectItem key={member.id} value={member.username}>
-                            {member.username}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
             <Separator />
+
             <div className="flex gap-4">
-              <h2 className="text-2xl">Shares</h2>
+              <h2 className="text-2xl">Payments</h2>
               <Button
                 type="button"
                 size="icon"
                 variant="outline"
                 className="rounded-full"
                 onClick={() =>
-                  append({
-                    userId: 1,
-                    amount: 0,
+                  appendPayment({
+                    payerId: "",
+                    amount: "",
                   })
                 }
               >
@@ -258,21 +265,147 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
               </Button>
             </div>
 
-            {fields.map((field, index) => {
+            {/* PAYMENTS */}
+
+            {paymentFields.map((field, index) => {
               return (
                 <div key={field.id}>
-                  <FormField
-                    control={control}
-                    name={`shares.${index}.amount` as const}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col items-center">
-                        <div className="grid w-full grid-cols-4 items-center gap-4">
-                          <FormLabel className="col-span-1 text-right">
-                            Description
-                          </FormLabel>
-                          <div className="col-span-3 flex gap-4">
+                  <div className="grid w-full grid-cols-4 items-center gap-4">
+                    <FormField
+                      control={control}
+                      name={`payments.${index}.payerId` as const}
+                      render={({ field }) => (
+                        <FormItem className="col-span-1 self-center ">
+                          <Select onValueChange={field.onChange}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Choose sharer" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {members.map((member, idx) => (
+                                <SelectItem
+                                  key={member.id}
+                                  value={member.id + ""}
+                                >
+                                  {member.username}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name={`payments.${index}.amount` as const}
+                      render={({ field }) => (
+                        <FormItem className="col-span-3">
+                          <div className="relative flex gap-4">
                             <FormControl>
                               <Input
+                                disabled={
+                                  watch().payments![index].payerId === ""
+                                }
+                                type="number"
+                                className={cn(
+                                  "w-full",
+                                  !!errors.payments?.[index]?.amount
+                                    ? "border-destructive focus-visible:ring-destructive"
+                                    : "",
+                                )}
+                                {...field}
+                              />
+                            </FormControl>
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              className="absolute right-0 shrink-0 rounded-full"
+                              onClick={() => removePayment(index)}
+                            >
+                              <X />
+                              <span className="sr-only">Remove Payment</span>
+                            </Button>
+                          </div>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+
+            <Separator />
+
+            {/* SHARES */}
+
+            <div className="flex gap-4">
+              <h2 className="text-2xl">Shares</h2>
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                className="rounded-full"
+                onClick={() =>
+                  appendShare({
+                    groupMemberId: "",
+                    amount: "",
+                  })
+                }
+              >
+                <Plus />
+                <span className="sr-only">Add Member</span>
+              </Button>
+            </div>
+
+            {shareFields.map((field, index) => {
+              return (
+                <div key={field.id}>
+                  <div className="grid w-full grid-cols-4 items-center gap-4">
+                    <FormField
+                      control={control}
+                      name={`shares.${index}.groupMemberId` as const}
+                      render={({ field }) => (
+                        <FormItem className="col-span-1 self-center ">
+                          <Select onValueChange={field.onChange}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Choose sharer" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {members.map((member, idx) => (
+                                <SelectItem
+                                  key={member.id}
+                                  value={member.id + ""}
+                                >
+                                  {member.username}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name={`shares.${index}.amount` as const}
+                      render={({ field }) => (
+                        <FormItem className="col-span-3">
+                          <div className="relative flex gap-4">
+                            <FormControl>
+                              <Input
+                                disabled={
+                                  watch().shares![index].groupMemberId === ""
+                                }
+                                type="number"
                                 className={cn(
                                   "w-full",
                                   !!errors.shares?.[index]?.amount
@@ -285,72 +418,23 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
                             <Button
                               type="button"
                               size="icon"
-                              variant="outline"
-                              className="shrink-0 rounded-full"
-                              onClick={() => remove(index)}
+                              variant="ghost"
+                              className="absolute right-0 shrink-0 rounded-full"
+                              onClick={() => removeShare(index)}
                             >
                               <X />
-                              <span className="sr-only">Remove Sharer</span>
+                              <span className="sr-only">Remove Share</span>
                             </Button>
                           </div>
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {/* <section className={"section"} key={field.id}>
-                    <input
-                      placeholder="name"
-                      {...register(`shares.${index}.amount` as const, {
-                        required: true,
-                      })}
-                      className={errors?.shares?.[index]?.amount ? "error" : ""}
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    <button type="button" onClick={() => remove(index)}>
-                      DELETE
-                    </button>
-                  </section> */}
+                  </div>
                 </div>
               );
             })}
-
-            <FormField
-              control={control}
-              name="shares"
-              render={({ field }) => (
-                <FormItem className="flex flex-col items-center">
-                  <div className="grid w-full grid-cols-4 items-center gap-4">
-                    <FormLabel className="text-right">Add share</FormLabel>
-                    <Select onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className={"col-span-2"}>
-                          <SelectValue placeholder="Choose sharer" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {members.map((member) => (
-                          <SelectItem key={member.id} value={member.username}>
-                            {member.username}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="outline"
-                      className="rounded-full"
-                    >
-                      <Plus />
-                      <span className="sr-only">Add Member</span>
-                    </Button>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* HERE */}
 
             <div className="flex w-full justify-end gap-4">
               <Button
@@ -365,101 +449,21 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
                 )}
               </Button>
               <DialogClose asChild>
-                <Button onClick={() => reset()} variant="secondary">
+                <Button
+                  type="button"
+                  onClick={() => reset()}
+                  variant="secondary"
+                >
                   Cancel
                 </Button>
               </DialogClose>
+              <Button type="button" onClick={() => reset()} variant="secondary">
+                Clear
+              </Button>
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
   );
-}
-
-{
-  /* <FormField
-control={form.control}
-name="shares"
-render={() => (
-  <FormItem>
-    <div className="mb-4">
-      <FormLabel className="text-base">Shares</FormLabel>
-      <FormDescription>Put shares here.</FormDescription>
-    </div>
-    {members.map((member, idx) => (
-      <FormField
-        key={member.id}
-        control={form.control}
-        name="payments"
-        render={({ field }) => {
-          return (
-            <FormItem
-              key={member.id}
-              className="flex flex-row items-start space-x-3 space-y-0"
-            >
-              <FormControl>
-                <Checkbox
-                  checked={field.value?.some(
-                    (value) => value.id === member.id,
-                  )}
-                  onCheckedChange={(checked) => {
-                    return checked
-                      ? field.onChange([
-                          ...field.value,
-                          {
-                            id: member.id,
-                            amount: 0,
-                          },
-                        ])
-                      : field.onChange(
-                          field.value?.filter(
-                            (value) => value.id !== member.id,
-                          ),
-                        );
-                  }}
-                />
-              </FormControl>
-              <FormControl>
-                <Input
-                  className={cn(
-                    "col-span-3",
-                    !!errors.payments
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : "",
-                  )}
-                  type="number"
-                  value={
-                    field.value.find(
-                      (value) => value.id === member.id,
-                    )?.amount || ""
-                  }
-                  onChange={(e) => {
-                    const updatedPayments = field.value.map(
-                      (value) =>
-                        value.id === member.id
-                          ? {
-                              ...value,
-                              amount: parseFloat(
-                                e.target.value || "0",
-                              ),
-                            }
-                          : value,
-                    );
-                    field.onChange(updatedPayments);
-                  }}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">
-                {member.username}
-              </FormLabel>
-            </FormItem>
-          );
-        }}
-      />
-    ))}
-    <FormMessage />
-  </FormItem>
-)}
-/> */
 }

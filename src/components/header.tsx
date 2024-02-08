@@ -10,7 +10,7 @@ import {
 import { logout } from "@/lib/actions";
 import { auth } from "@/lib/auth";
 import { Cat } from "lucide-react";
-import MainNav from "./main-nav";
+import Link from "next/link";
 import { ModeToggle } from "./mode-toggle";
 
 export default async function Header() {
@@ -20,9 +20,20 @@ export default async function Header() {
   return (
     <header className="w-full flex-shrink-0">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
-        <h1 className="text-2xl font-bold">Bill Splitter</h1>
-        <MainNav />
-        <div className="flex items-center space-x-4">
+        <div className="flex w-1/3 items-center ">
+          <h1 className="text-2xl font-bold">Bill Splitter</h1>
+        </div>
+        <nav className="flex w-1/3 flex-shrink-0 justify-center ">
+          <ul className="flex gap-4">
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            <li>
+              <Link href="/groups">Groups</Link>
+            </li>
+          </ul>
+        </nav>
+        <div className="flex w-1/3 items-center justify-end space-x-4">
           <DropdownMenu>
             <DropdownMenuTrigger>
               {session && (

@@ -7,12 +7,14 @@ import {
   NewGroup,
   NewGroupMember,
   NewPayment,
+  NewShare,
   NewUser,
   User,
   bills,
   groupMembers,
   groups,
   payments,
+  shares,
   users,
 } from "./schema";
 
@@ -29,7 +31,6 @@ export {
   deleteUser,
   getBills,
   getBillsByGroup,
-  getBillsByGroupMember,
   getGroupById,
   getGroupData,
   getGroupMemberById,
@@ -101,7 +102,10 @@ async function getGroups() {
 export type GroupData = {
   group: Group | null;
   members: GroupMember[];
+  // bills: Bill[];
 };
+
+// TODO: Add bills to the GroupData type
 
 async function getGroupData(groupId: number) {
   const rows = await db
@@ -110,8 +114,8 @@ async function getGroupData(groupId: number) {
       members: groupMembers,
     })
     .from(groups)
-    .where(eq(groups.id, groupId))
-    .leftJoin(groupMembers, eq(groups.id, groupMembers.groupId));
+    .leftJoin(groupMembers, eq(groups.id, groupMembers.groupId))
+    .where(eq(groups.id, groupId));
 
   const result = rows.reduce<GroupData>(
     (acc, row) => {
@@ -121,6 +125,7 @@ async function getGroupData(groupId: number) {
       if (row.members) {
         acc.members.push(row.members);
       }
+
       return acc;
     },
     { group: null, members: [] },
@@ -130,7 +135,7 @@ async function getGroupData(groupId: number) {
 }
 
 async function getGroupsByUser(userId: number) {
-  return await db.select().from(groups).where(eq(groups.createdBy, userId));
+  return await db.select().from(groups).where(eq(groups.creatorId, userId));
 }
 
 async function getGroupById(groupId: number) {
@@ -214,13 +219,6 @@ async function getBillsByGroup(groupId: number) {
   return await db.select().from(bills).where(eq(bills.groupId, groupId));
 }
 
-async function getBillsByGroupMember(groupId: number, groupMemberId: number) {
-  return await db
-    .select()
-    .from(bills)
-    .where(and(eq(bills.groupId, groupId), eq(bills.payerId, groupMemberId)));
-}
-
 async function updateBill(billId: number, bill: NewBill) {
   return await db
     .update(bills)
@@ -267,4 +265,8 @@ async function deletePayment(paymentId: number) {
     .delete(payments)
     .where(eq(payments.id, paymentId))
     .returning();
+}
+
+export function insertShare(share: NewShare) {
+  return db.insert(shares).values(share).returning();
 }

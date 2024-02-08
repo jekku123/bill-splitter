@@ -13,7 +13,7 @@ import { NewGroup } from "../schema";
 
 export async function createGroup(userId: string, values: GroupFormValues) {
   const newGroup: NewGroup = {
-    createdBy: parseInt(userId),
+    creatorId: parseInt(userId),
     title: values.name,
     description: values.description,
   };

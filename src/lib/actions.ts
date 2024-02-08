@@ -2,14 +2,18 @@
 
 import { LoginFormValues } from "@/app/(auth)/login/form";
 import { RegisterFormValues } from "@/app/(auth)/register/form";
+import { BillFormValues } from "@/components/create-bill";
 import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
+import { revalidatePath } from "next/cache";
 import { ZodError, z } from "zod";
 import { signIn, signOut } from "./auth";
 import {
   getUserByEmail,
   insertBill,
   insertGroupMember,
+  insertPayment,
+  insertShare,
   insertUser,
 } from "./drizzle/data-access2";
 import { NewBill, NewGroupMember } from "./drizzle/schema";
@@ -153,16 +157,41 @@ export async function addGroupMember(member: NewGroupMember) {
   }
 }
 
-export async function createBill(bill: NewBill) {
-  try {
-    const newBill = await insertBill(bill);
+export async function createBill(bill: BillFormValues, groupId: number) {
+  const billData: NewBill = {
+    groupId: groupId,
+    title: bill.title,
+    description: bill.description,
+    amount: bill.amount,
+  };
 
-    if (!newBill) {
+  try {
+    const newBill = await insertBill(billData);
+
+    if (!newBill.at(0)) {
       return {
         success: false,
         error: "Could not create bill at this time. Please try again later.",
       };
     }
+
+    bill.payments.forEach(async (payment) => {
+      await insertPayment({
+        billId: newBill[0].id,
+        payerId: Number(payment.payerId),
+        amount: payment.amount,
+      });
+    });
+
+    bill.shares.forEach(async (share) => {
+      await insertShare({
+        billId: newBill[0].id,
+        groupMemberId: Number(share.groupMemberId),
+        amount: share.amount,
+      });
+    });
+
+    revalidatePath(`/groups/${groupId}`);
 
     return {
       success: true,

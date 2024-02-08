@@ -8,9 +8,9 @@ export default async function GroupPage({
 }) {
   // const group = await getGroupById(Number(params.slug));
   // const members = await getGroupMembers(Number(params.slug));
-  const bills = await getBillsByGroup(Number(params.slug));
 
   const groupData = await getGroupData(Number(params.slug));
+  const bills = await getBillsByGroup(Number(params.slug));
 
   // if (!group) {
   //   return null;
@@ -42,7 +42,11 @@ export default async function GroupPage({
       {bills.at(0) ? (
         <ul className="">
           {bills.map((bill) => (
-            <li key={bill.id}>{bill.title}</li>
+            <div key={bill.id}>
+              <h3>{bill.title}</h3>
+              <p>{bill.description}</p>
+              <p>{bill.amount}</p>
+            </div>
           ))}
         </ul>
       ) : (
