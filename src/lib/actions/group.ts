@@ -8,8 +8,8 @@ import {
   getGroupsByUser,
   insertGroup,
   insertGroupMember,
-} from "../data-access2";
-import { NewGroup } from "../schema";
+} from "../../drizzle/data-access";
+import { NewGroup } from "../../drizzle/schema";
 
 export async function createGroup(userId: string, values: GroupFormValues) {
   const newGroup: NewGroup = {
@@ -63,25 +63,16 @@ export async function createGroup(userId: string, values: GroupFormValues) {
   }
 }
 
-export async function getUsersGroups(userId: string) {
+export async function getUsersGroups(userId: number) {
   try {
-    const groups = await getGroupsByUser(Number(userId));
+    const groups = await getGroupsByUser(userId);
 
-    if (!groups.at(0)) {
-      return {
-        success: false,
-        errors: "No groups found",
-      };
-    }
+    if (!groups.at(0)) return null;
 
     return groups;
   } catch (error) {
-    return {
-      success: false,
-      errors: {
-        message: "Could not get groups at this time. Please try again later.",
-      },
-    };
+    console.error("error", error);
+    return null;
   }
 }
 

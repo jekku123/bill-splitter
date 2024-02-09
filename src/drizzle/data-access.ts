@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { db } from ".";
 import {
+  Bill,
   Group,
   GroupMember,
   NewBill,
@@ -28,6 +29,7 @@ export {
   deleteGroup,
   deleteGroupMember,
   deletePayment,
+  deleteShare,
   deleteUser,
   getBills,
   getBillsByGroup,
@@ -40,6 +42,8 @@ export {
   getPayments,
   getPaymentsByBill,
   getPaymentsByGroupMember,
+  getSharesByBill,
+  getSharesByGroupMember,
   getUserByEmail,
   getUserById,
   getUsers,
@@ -47,11 +51,13 @@ export {
   insertGroup,
   insertGroupMember,
   insertPayment,
+  insertShare,
   insertUser,
   updateBill,
   updateGroup,
   updateGroupMember,
   updatePayment,
+  updateShare,
   updateUser,
 };
 
@@ -65,7 +71,7 @@ async function getUsers() {
   return await db.query.users.findMany();
 }
 
-async function getUserByEmail(email: string) {
+async function getUserByEmail(email: string): Promise<User | undefined> {
   return await db.query.users.findFirst({
     where: eq(users.email, email),
   });
@@ -99,48 +105,35 @@ async function getGroups() {
   return await db.query.groups.findMany();
 }
 
-export type GroupData = {
-  group: Group | null;
-  members: GroupMember[];
-  // bills: Bill[];
-};
+export interface GroupData extends Group {
+  groupMembers: GroupMember[];
+}
 
-// TODO: Add bills to the GroupData type
-
-async function getGroupData(groupId: number) {
-  const rows = await db
-    .select({
-      group: groups,
-      members: groupMembers,
-    })
-    .from(groups)
-    .leftJoin(groupMembers, eq(groups.id, groupMembers.groupId))
-    .where(eq(groups.id, groupId));
-
-  const result = rows.reduce<GroupData>(
-    (acc, row) => {
-      if (!acc.group) {
-        acc.group = row.group;
-      }
-      if (row.members) {
-        acc.members.push(row.members);
-      }
-
-      return acc;
+async function getGroupData(groupId: number): Promise<GroupData> {
+  const res = await db.query.groups.findFirst({
+    where: eq(groups.id, groupId),
+    with: {
+      groupMembers: true,
     },
-    { group: null, members: [] },
-  );
+  });
 
-  return result;
+  if (!res) {
+    throw new Error(`Group with ID ${groupId} not found`);
+  }
+
+  return res;
 }
 
 async function getGroupsByUser(userId: number) {
-  return await db.select().from(groups).where(eq(groups.creatorId, userId));
+  return await db.query.groups.findMany({
+    where: eq(groups.creatorId, userId),
+  });
 }
 
 async function getGroupById(groupId: number) {
-  const res = await db.select().from(groups).where(eq(groups.id, groupId));
-  return res[0];
+  return await db.query.groups.findFirst({
+    where: eq(groups.id, groupId),
+  });
 }
 
 async function updateGroup(groupId: number, group: NewGroup) {
@@ -162,22 +155,18 @@ async function insertGroupMember(groupMember: NewGroupMember) {
 }
 
 async function getGroupMembers(groupId: number) {
-  return await db
-    .select()
-    .from(groupMembers)
-    .where(eq(groupMembers.groupId, groupId));
+  return await db.query.groupMembers.findMany({
+    where: eq(groupMembers.groupId, groupId),
+  });
 }
 
 async function getGroupMemberById(groupId: number, groupMemberId: number) {
-  return await db
-    .select()
-    .from(groupMembers)
-    .where(
-      and(
-        eq(groupMembers.groupId, groupId),
-        eq(groupMembers.id, groupMemberId),
-      ),
-    );
+  return await db.query.groupMembers.findFirst({
+    where: and(
+      eq(groupMembers.groupId, groupId),
+      eq(groupMembers.id, groupMemberId),
+    ),
+  });
 }
 
 async function updateGroupMember(groupId: number, groupMember: GroupMember) {
@@ -215,8 +204,10 @@ async function getBills() {
   return await db.query.bills.findMany();
 }
 
-async function getBillsByGroup(groupId: number) {
-  return await db.select().from(bills).where(eq(bills.groupId, groupId));
+async function getBillsByGroup(groupId: number): Promise<Bill[]> {
+  return await db.query.bills.findMany({
+    where: eq(bills.groupId, groupId),
+  });
 }
 
 async function updateBill(billId: number, bill: NewBill) {
@@ -242,14 +233,15 @@ async function getPayments() {
 }
 
 async function getPaymentsByGroupMember(groupMemberId: number) {
-  return await db
-    .select()
-    .from(payments)
-    .where(and(eq(payments.payerId, groupMemberId)));
+  return await db.query.payments.findMany({
+    where: eq(payments.payerId, groupMemberId),
+  });
 }
 
 async function getPaymentsByBill(billId: number) {
-  return await db.select().from(payments).where(eq(payments.billId, billId));
+  return await db.query.payments.findMany({
+    where: eq(payments.billId, billId),
+  });
 }
 
 async function updatePayment(paymentId: number, payment: NewPayment) {
@@ -267,6 +259,32 @@ async function deletePayment(paymentId: number) {
     .returning();
 }
 
-export function insertShare(share: NewShare) {
+async function insertShare(share: NewShare) {
   return db.insert(shares).values(share).returning();
+}
+
+async function getSharesByBill(billId: number) {
+  return db.query.shares.findMany({
+    where: eq(shares.billId, billId),
+  });
+}
+
+async function getSharesByGroupMember(groupMemberId: number) {
+  return db.query.shares.findMany({
+    where: eq(shares.groupMemberId, groupMemberId),
+  });
+}
+
+async function updateShare(shareId: number, share: NewShare) {
+  return db.update(shares).set(share).where(eq(shares.id, shareId)).returning();
+}
+
+async function deleteShare(shareId: number) {
+  return db.delete(shares).where(eq(shares.id, shareId)).returning();
+}
+
+async function getPaymentsByUser(userId: number) {
+  return db.query.payments.findMany({
+    where: eq(payments.payerId, userId),
+  });
 }

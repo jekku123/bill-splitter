@@ -1,11 +1,11 @@
 import { relations } from "drizzle-orm";
 import {
-  date,
   decimal,
   integer,
   pgTable,
   serial,
   text,
+  timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
@@ -25,17 +25,25 @@ export const users = pgTable(
   },
 );
 
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
 export const usersRelations = relations(users, ({ many }) => ({
   groups: many(groups),
 }));
 
 export const groups = pgTable("groups", {
   id: serial("id").primaryKey(),
-  creatorId: integer("creatorId"),
+  creatorId: integer("creator_id").notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  createdAt: date("createdAt").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
+
+export type Group = typeof groups.$inferSelect;
+export type NewGroup = typeof groups.$inferInsert;
 
 export const groupsRelations = relations(groups, ({ one, many }) => ({
   creator: one(users, {
@@ -49,9 +57,12 @@ export const groupsRelations = relations(groups, ({ one, many }) => ({
 export const groupMembers = pgTable("group_members", {
   id: serial("id").primaryKey(),
   username: text("username").notNull(),
-  userId: integer("userId"),
-  groupId: integer("groupId").notNull(),
+  userId: integer("user_id"),
+  groupId: integer("group_id").notNull(),
 });
+
+export type GroupMember = typeof groupMembers.$inferSelect;
+export type NewGroupMember = typeof groupMembers.$inferInsert;
 
 export const groupMembersRelations = relations(
   groupMembers,
@@ -71,11 +82,13 @@ export const groupMembersRelations = relations(
 
 export const bills = pgTable("bills", {
   id: serial("id").primaryKey(),
-  groupId: integer("groupId").notNull(),
+  groupId: integer("group_id").notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
   amount: decimal("amount").notNull(),
-  createdAt: date("createdAt").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export type Bill = typeof bills.$inferSelect;
@@ -86,22 +99,29 @@ export const billsRelations = relations(bills, ({ one, many }) => ({
     fields: [bills.groupId],
     references: [groups.id],
   }),
-  payments: many(payments),
-  shares: many(shares),
+  payments: many(payments, {
+    relationName: "payments",
+  }),
+  shares: many(shares, {
+    relationName: "shares",
+  }),
 }));
 
 export const payments = pgTable("payments", {
   id: serial("id").primaryKey(),
-  billId: integer("billId").notNull(),
-  payerId: integer("payerId").notNull(),
+  billId: integer("bill_id").notNull(),
+  payerId: integer("payer_id").notNull(),
   amount: decimal("amount").notNull(),
-  createdAt: date("createdAt").defaultNow(),
 });
+
+export type Payment = typeof payments.$inferSelect;
+export type NewPayment = typeof payments.$inferInsert;
 
 export const paymentsRelations = relations(payments, ({ one }) => ({
   bill: one(bills, {
     fields: [payments.billId],
     references: [bills.id],
+    relationName: "payments",
   }),
   payer: one(groupMembers, {
     fields: [payments.payerId],
@@ -111,8 +131,8 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
 
 export const shares = pgTable("shares", {
   id: serial("id").primaryKey(),
-  billId: integer("billId").notNull(),
-  groupMemberId: integer("groupMemberId").notNull(),
+  billId: integer("bill_id").notNull(),
+  groupMemberId: integer("group_member_id").notNull(),
   amount: decimal("amount").notNull(),
 });
 
@@ -123,19 +143,10 @@ export const sharesRelations = relations(shares, ({ one }) => ({
   bill: one(bills, {
     fields: [shares.billId],
     references: [bills.id],
+    relationName: "shares",
   }),
   member: one(groupMembers, {
     fields: [shares.groupMemberId],
     references: [groupMembers.id],
   }),
 }));
-
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
-export type Group = typeof groups.$inferSelect;
-export type NewGroup = typeof groups.$inferInsert;
-export type GroupMember = typeof groupMembers.$inferSelect;
-export type NewGroupMember = typeof groupMembers.$inferInsert;
-
-export type Payment = typeof payments.$inferSelect;
-export type NewPayment = typeof payments.$inferInsert;

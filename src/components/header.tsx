@@ -7,8 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logout } from "@/lib/actions";
-import { auth } from "@/lib/auth";
+import { logout } from "@/lib/auth/actions";
+import { auth } from "@/lib/auth/auth";
 import { Cat } from "lucide-react";
 import Link from "next/link";
 import { ModeToggle } from "./mode-toggle";

@@ -1,7 +1,7 @@
 import CreateGroupDialog from "@/components/create-group";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
-import { getGroupsByUser } from "@/lib/drizzle/data-access2";
+import { getUsersGroups } from "@/lib/actions/group";
 import GroupCard from "../../components/group-card";
 
 export default async function GroupsPage() {
@@ -11,22 +11,22 @@ export default async function GroupsPage() {
     return null;
   }
 
-  const groups = await getGroupsByUser(Number(session.user.id));
+  const groups = await getUsersGroups(Number(session.user.id));
 
   return (
     <div className="flex w-full flex-col items-center gap-10">
       <h1 className="text-7xl font-bold">Groups</h1>
       <CreateGroupDialog user={session.user} />
 
-      {groups && (
+      {groups ? (
         <ul className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {groups.map((group) => (
             <GroupCard key={group.id} group={group} />
           ))}
         </ul>
+      ) : (
+        <p>No groups found</p>
       )}
-
-      {!groups && <p>No groups found</p>}
     </div>
   );
 }

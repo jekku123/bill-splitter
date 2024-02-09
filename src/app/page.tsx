@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import Link from "next/link";
 
 export default async function Home() {
   const session = await auth();
 
-  console.log(session?.user);
   return (
     <div className="flex w-full flex-col items-center justify-center gap-6">
       <h1>Hello, {session && session.user.name}! ❤️</h1>

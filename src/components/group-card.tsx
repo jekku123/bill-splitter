@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Group } from "@/lib/drizzle/schema";
+import { Group } from "@/drizzle/schema";
 
-import { removeGroup } from "@/lib/drizzle/actions/group";
-import { getGroupData } from "@/lib/drizzle/data-access2";
+import { getGroupData } from "@/drizzle/data-access";
+import { removeGroup } from "@/lib/actions/group";
 import { X } from "lucide-react";
 import Link from "next/link";
 import AddGroupMemberDialog from "./add-group-member";
@@ -49,7 +49,7 @@ export default async function GroupCard({ group }: { group: Group }) {
               <AddGroupMemberDialog groupId={group.id} />
             </div>
             <ul className="my-4 ml-6 list-disc [&>li]:mt-2">
-              {groupData.members.map((member) => (
+              {groupData.groupMembers.map((member) => (
                 <li key={member.id}>{member.username}</li>
               ))}
             </ul>

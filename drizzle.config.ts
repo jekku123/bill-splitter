@@ -1,13 +1,13 @@
-import 'dotenv/config';
+import "dotenv/config";
 
-import { defineConfig } from 'drizzle-kit';
+import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema: './src/lib/drizzle/schema.ts',
-  out: './migrations',
-  driver: 'pg',
+  schema: "./src/drizzle/schema.ts",
+  out: "./migrations",
+  driver: "pg",
   dbCredentials: {
-    connectionString: process.env.POSTGRES_URL! + '?sslmode=require',
+    connectionString: process.env.POSTGRES_URL! + "?sslmode=require",
   },
   verbose: true,
   strict: true,

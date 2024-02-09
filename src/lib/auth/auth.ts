@@ -2,8 +2,8 @@ import Credentials from "@auth/core/providers/credentials";
 import GitHub from "@auth/core/providers/github";
 import { compare } from "bcrypt";
 import NextAuth from "next-auth";
+import { getUserByEmail, insertUser } from "../../drizzle/data-access";
 import { authConfig } from "./auth.config";
-import { getUserByEmail, insertUser } from "./drizzle/data-access2";
 
 export const {
   handlers: { GET, POST },
@@ -62,7 +62,7 @@ export const {
             await insertUser(newUser);
           }
         } catch (err) {
-          console.log(err);
+          console.error(err);
           return false;
         }
       }

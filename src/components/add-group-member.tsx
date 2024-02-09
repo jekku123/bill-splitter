@@ -26,9 +26,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { addGroupMember } from "@/lib/drizzle/actions/group";
+import { addGroupMember } from "@/lib/actions/group";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -80,10 +79,7 @@ export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="icon" variant="outline" className="rounded-full">
-          <Plus />
-          <span className="sr-only">Add member</span>
-        </Button>
+        <Button variant="outline">Add Member</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

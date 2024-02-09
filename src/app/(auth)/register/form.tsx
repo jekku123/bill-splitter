@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import GitHubLogin from "@/components/ui/github-login";
 import { Input } from "@/components/ui/input";
-import { register } from "@/lib/actions";
+import { register } from "@/lib/auth/actions";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";

@@ -28,7 +28,8 @@ import {
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
-import { GroupData } from "@/lib/drizzle/data-access2";
+import { GroupData } from "@/drizzle/data-access";
+import { createBill, removeBill } from "@/lib/actions/bills";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -41,7 +42,6 @@ import {
 } from "./ui/select";
 import { Separator } from "./ui/separator";
 import { Textarea } from "./ui/textarea";
-import { createBill } from "@/lib/actions";
 
 const billFormSchema = z
   .object({
@@ -83,13 +83,14 @@ const billFormSchema = z
       path: ["amount"],
     },
   );
-export type BillFormValues = z.infer<typeof billFormSchema>;
+export type BillFormSchema = z.infer<typeof billFormSchema>;
 
 export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
-  const { group, members } = groupData;
+  const { groupMembers, ...group } = groupData;
+
   const [open, setOpen] = useState(false);
 
-  const form = useForm<BillFormValues>({
+  const form = useForm<BillFormSchema>({
     resolver: zodResolver(billFormSchema),
     defaultValues: {
       title: "",
@@ -126,31 +127,24 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
     name: "shares",
   });
 
-  async function onSubmit(values: BillFormValues) {
-    console.log(values);
-
-    const newBill: BillFormValues = {
-      title: values.title,
-      description: values.description,
-      amount: values.amount,
-      payments: values.payments,
-      shares: values.shares,
-    };
-
+  async function onSubmit(values: BillFormSchema) {
     const groupId = group?.id!;
 
-    const result = await createBill(newBill, groupId);
+    const result = await createBill({ ...values }, groupId);
 
     if (!result.success) {
-      toast("Failed to add bill", {});
+      toast(result.error);
+      return;
     }
 
     toast("Bill added", {
       action: {
         label: "Undo",
-        onClick: () => console.log("Undo"),
+        onClick: async () => await removeBill(result.data!.id),
       },
     });
+
+    reset();
     setOpen(false);
   }
 
@@ -169,7 +163,9 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
             Add a bill to group {group?.title}
           </DialogDescription>
         </DialogHeader>
+
         <Separator />
+
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
             <FormField
@@ -283,7 +279,7 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {members.map((member, idx) => (
+                              {groupMembers.map((member, idx) => (
                                 <SelectItem
                                   key={member.id}
                                   value={member.id + ""}
@@ -342,8 +338,6 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
 
             <Separator />
 
-            {/* SHARES */}
-
             <div className="flex gap-4">
               <h2 className="text-2xl">Shares</h2>
               <Button
@@ -379,7 +373,7 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {members.map((member, idx) => (
+                              {groupMembers.map((member, idx) => (
                                 <SelectItem
                                   key={member.id}
                                   value={member.id + ""}

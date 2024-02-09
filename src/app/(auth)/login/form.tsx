@@ -26,7 +26,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import GitHubLogin from "@/components/ui/github-login";
-import { login } from "@/lib/actions";
+import { login } from "@/lib/auth/actions";
 import { z } from "zod";
 
 const defaultValues = {

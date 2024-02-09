@@ -1,6 +1,6 @@
 "use client";
 
-import { githubLogin } from "@/lib/actions";
+import { githubLogin } from "@/lib/auth/actions";
 import { cn } from "@/lib/utils";
 import { useFormStatus } from "react-dom";
 import { Icons } from "../icons";
@@ -8,8 +8,6 @@ import { Button } from "./button";
 
 export default function GitHubLogin() {
   const { pending } = useFormStatus();
-
-  console.log(pending);
 
   return (
     <form action={githubLogin}>

@@ -1,5 +1,8 @@
-import AddBillDialog from "@/components/create-bill";
-import { getBillsByGroup, getGroupData } from "@/lib/drizzle/data-access2";
+import BillsTable from "@/components/bills-table";
+import MembersCard from "@/components/members-card";
+import { SettleUp } from "@/components/settle-up";
+import { getBillsByGroup, getGroupData } from "@/drizzle/data-access";
+import { Suspense } from "react";
 
 export default async function GroupPage({
   params,
@@ -16,42 +19,17 @@ export default async function GroupPage({
   //   return null;
   // }
 
-  if (!groupData) {
-    return null;
-  }
-
   return (
     <div className="flex w-full flex-col items-center gap-10">
-      <h1 className="text-7xl font-bold">{groupData.group?.title}</h1>
-
-      <p>{groupData.group?.description}</p>
-      <h2>Members</h2>
-      {groupData.members.at(0) ? (
-        <ul className="">
-          {groupData.members.map((member) => (
-            <li key={member.id}>{member.username}</li>
-          ))}
-        </ul>
-      ) : (
-        <span>No members</span>
-      )}
-      <div className="flex gap-4">
-        <h2>Bills</h2>
-        <AddBillDialog groupData={groupData} />
+      <h1 className="text-7xl font-bold">{groupData?.title}</h1>
+      <p>{groupData?.description}</p>
+      <div className="flex justify-center gap-4">
+        <Suspense fallback={<span>Loading...</span>}>
+          <SettleUp groupId={groupData.id} />
+        </Suspense>
+        <MembersCard groupId={groupData.id} members={groupData.groupMembers} />
       </div>
-      {bills.at(0) ? (
-        <ul className="">
-          {bills.map((bill) => (
-            <div key={bill.id}>
-              <h3>{bill.title}</h3>
-              <p>{bill.description}</p>
-              <p>{bill.amount}</p>
-            </div>
-          ))}
-        </ul>
-      ) : (
-        <span>No bills</span>
-      )}
+      <BillsTable bills={bills} />
     </div>
   );
 }

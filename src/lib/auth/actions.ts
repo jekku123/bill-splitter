@@ -2,21 +2,11 @@
 
 import { LoginFormValues } from "@/app/(auth)/login/form";
 import { RegisterFormValues } from "@/app/(auth)/register/form";
-import { BillFormValues } from "@/components/create-bill";
 import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
-import { revalidatePath } from "next/cache";
 import { ZodError, z } from "zod";
+import { getUserByEmail, insertUser } from "../../drizzle/data-access";
 import { signIn, signOut } from "./auth";
-import {
-  getUserByEmail,
-  insertBill,
-  insertGroupMember,
-  insertPayment,
-  insertShare,
-  insertUser,
-} from "./drizzle/data-access2";
-import { NewBill, NewGroupMember } from "./drizzle/schema";
 
 const registerFormSchema = z
   .object({
@@ -111,96 +101,5 @@ export async function login(fields: LoginFormValues) {
       }
     }
     throw err;
-  }
-}
-
-function getZodErrors(zodErrors: any) {
-  // let errors{};
-
-  // zodErrors.errors.forEach((issue) => {
-  //   errors = {
-  //     ...errors,
-  //     [issue.path[0]]: issue.message,
-  //   };
-  // });
-
-  return {
-    errors: "gg",
-  };
-}
-
-export async function addGroupMember(member: NewGroupMember) {
-  try {
-    const newGroupMember = await insertGroupMember({
-      groupId: member.groupId,
-      userId: member.userId,
-      username: member.username,
-    });
-
-    if (!newGroupMember) {
-      return {
-        success: false,
-        error:
-          "Could not add group member at this time. Please try again later.",
-      };
-    }
-
-    return {
-      success: true,
-      error: undefined,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: "Could not add group member at this time. Please try again later.",
-    };
-  }
-}
-
-export async function createBill(bill: BillFormValues, groupId: number) {
-  const billData: NewBill = {
-    groupId: groupId,
-    title: bill.title,
-    description: bill.description,
-    amount: bill.amount,
-  };
-
-  try {
-    const newBill = await insertBill(billData);
-
-    if (!newBill.at(0)) {
-      return {
-        success: false,
-        error: "Could not create bill at this time. Please try again later.",
-      };
-    }
-
-    bill.payments.forEach(async (payment) => {
-      await insertPayment({
-        billId: newBill[0].id,
-        payerId: Number(payment.payerId),
-        amount: payment.amount,
-      });
-    });
-
-    bill.shares.forEach(async (share) => {
-      await insertShare({
-        billId: newBill[0].id,
-        groupMemberId: Number(share.groupMemberId),
-        amount: share.amount,
-      });
-    });
-
-    revalidatePath(`/groups/${groupId}`);
-
-    return {
-      success: true,
-      error: undefined,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: "Could not create bill at this time. Please try again later.",
-    };
   }
 }

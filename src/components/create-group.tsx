@@ -174,7 +174,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { createGroup } from "@/lib/drizzle/actions/group";
+import { createGroup } from "@/lib/actions/group";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { toast } from "sonner";
