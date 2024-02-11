@@ -5,11 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getSolvedDebts } from "@/lib/actions/debts";
+import { getSettleUp } from "@/lib/debts";
 import { ArrowRight } from "lucide-react";
 
 export async function SettleUp({ groupId }: { groupId: number }) {
-  const debts = await getSolvedDebts(groupId);
+  const debts = await getSettleUp(groupId);
 
   return (
     <Card>
@@ -19,7 +19,7 @@ export async function SettleUp({ groupId }: { groupId: number }) {
       </CardHeader>
       <CardContent>
         <ul>
-          {debts.at(0) ? (
+          {debts ? (
             debts.map((debt, idx) => (
               <li key={idx} className="flex gap-2">
                 <span>{debt.debtor.username}</span>

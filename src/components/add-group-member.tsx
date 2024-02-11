@@ -26,7 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { addGroupMember } from "@/lib/actions/group";
+import { addGroupMemberAction } from "@/lib/actions/group-actions";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -65,7 +65,7 @@ export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
   async function onSubmit(values: MemberFormValues) {
     const username = values.username;
 
-    const result = await addGroupMember({ username, groupId });
+    const result = await addGroupMemberAction({ username, groupId });
 
     if (!result.success) {
       toast("Failed to add member", {});

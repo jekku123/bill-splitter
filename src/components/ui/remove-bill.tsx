@@ -1,4 +1,4 @@
-import { removeBill } from "@/lib/actions/bills";
+import { removeBill } from "@/lib/actions/bill-actions";
 import { X } from "lucide-react";
 import { Button } from "./button";
 

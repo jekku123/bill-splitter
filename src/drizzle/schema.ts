@@ -25,9 +25,6 @@ export const users = pgTable(
   },
 );
 
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
-
 export const usersRelations = relations(users, ({ many }) => ({
   groups: many(groups),
 }));
@@ -42,27 +39,27 @@ export const groups = pgTable("groups", {
     .defaultNow(),
 });
 
-export type Group = typeof groups.$inferSelect;
-export type NewGroup = typeof groups.$inferInsert;
-
 export const groupsRelations = relations(groups, ({ one, many }) => ({
   creator: one(users, {
     fields: [groups.creatorId],
     references: [users.id],
   }),
-  groupMembers: many(groupMembers),
-  bills: many(bills),
+  groupMembers: many(groupMembers, {
+    relationName: "groupMembers",
+  }),
+  bills: many(bills, {
+    relationName: "bills",
+  }),
 }));
 
 export const groupMembers = pgTable("group_members", {
   id: serial("id").primaryKey(),
   username: text("username").notNull(),
   userId: integer("user_id"),
-  groupId: integer("group_id").notNull(),
+  groupId: integer("group_id")
+    .references(() => groups.id, { onDelete: "cascade" })
+    .notNull(),
 });
-
-export type GroupMember = typeof groupMembers.$inferSelect;
-export type NewGroupMember = typeof groupMembers.$inferInsert;
 
 export const groupMembersRelations = relations(
   groupMembers,
@@ -74,15 +71,24 @@ export const groupMembersRelations = relations(
     group: one(groups, {
       fields: [groupMembers.groupId],
       references: [groups.id],
+      relationName: "groupMembers",
     }),
-    payments: many(payments),
-    shares: many(shares),
+    payments: many(payments, {
+      relationName: "member_payments",
+    }),
+    shares: many(shares, {
+      relationName: "member_shares",
+    }),
   }),
 );
 
 export const bills = pgTable("bills", {
   id: serial("id").primaryKey(),
-  groupId: integer("group_id").notNull(),
+  groupId: integer("group_id")
+    .references(() => groups.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
   amount: decimal("amount").notNull(),
@@ -91,62 +97,73 @@ export const bills = pgTable("bills", {
     .defaultNow(),
 });
 
-export type Bill = typeof bills.$inferSelect;
-export type NewBill = typeof bills.$inferInsert;
-
 export const billsRelations = relations(bills, ({ one, many }) => ({
   group: one(groups, {
     fields: [bills.groupId],
     references: [groups.id],
+    relationName: "bills",
   }),
   payments: many(payments, {
-    relationName: "payments",
+    relationName: "bill_payments",
   }),
   shares: many(shares, {
-    relationName: "shares",
+    relationName: "bill_shares",
   }),
 }));
 
 export const payments = pgTable("payments", {
   id: serial("id").primaryKey(),
-  billId: integer("bill_id").notNull(),
+  billId: integer("bill_id")
+    .references(() => bills.id, { onDelete: "cascade" })
+    .notNull(),
   payerId: integer("payer_id").notNull(),
   amount: decimal("amount").notNull(),
 });
-
-export type Payment = typeof payments.$inferSelect;
-export type NewPayment = typeof payments.$inferInsert;
 
 export const paymentsRelations = relations(payments, ({ one }) => ({
   bill: one(bills, {
     fields: [payments.billId],
     references: [bills.id],
-    relationName: "payments",
+    relationName: "bill_payments",
   }),
   payer: one(groupMembers, {
     fields: [payments.payerId],
     references: [groupMembers.id],
+    relationName: "member_payments",
   }),
 }));
 
 export const shares = pgTable("shares", {
   id: serial("id").primaryKey(),
-  billId: integer("bill_id").notNull(),
+  billId: integer("bill_id")
+    .references(() => bills.id, { onDelete: "cascade" })
+    .notNull(),
   groupMemberId: integer("group_member_id").notNull(),
   amount: decimal("amount").notNull(),
 });
-
-export type Share = typeof shares.$inferSelect;
-export type NewShare = typeof shares.$inferInsert;
 
 export const sharesRelations = relations(shares, ({ one }) => ({
   bill: one(bills, {
     fields: [shares.billId],
     references: [bills.id],
-    relationName: "shares",
+    relationName: "bill_shares",
   }),
   member: one(groupMembers, {
     fields: [shares.groupMemberId],
     references: [groupMembers.id],
+    relationName: "member_shares",
   }),
 }));
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type Group = typeof groups.$inferSelect;
+export type NewGroup = typeof groups.$inferInsert;
+export type GroupMember = typeof groupMembers.$inferSelect;
+export type NewGroupMember = typeof groupMembers.$inferInsert;
+export type Bill = typeof bills.$inferSelect;
+export type NewBill = typeof bills.$inferInsert;
+export type Payment = typeof payments.$inferSelect;
+export type NewPayment = typeof payments.$inferInsert;
+export type Share = typeof shares.$inferSelect;
+export type NewShare = typeof shares.$inferInsert;

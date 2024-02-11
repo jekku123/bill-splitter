@@ -1,7 +1,10 @@
 import BillsTable from "@/components/bills-table";
+import AddBillDialog from "@/components/create-bill";
 import MembersCard from "@/components/members-card";
 import { SettleUp } from "@/components/settle-up";
-import { getBillsByGroup, getGroupData } from "@/drizzle/data-access";
+import { getGroup } from "@/drizzle/db";
+import { notFound } from "next/navigation";
+
 import { Suspense } from "react";
 
 export default async function GroupPage({
@@ -9,27 +12,24 @@ export default async function GroupPage({
 }: {
   params: { slug: string };
 }) {
-  // const group = await getGroupById(Number(params.slug));
-  // const members = await getGroupMembers(Number(params.slug));
+  const group = await getGroup(Number(params.slug));
 
-  const groupData = await getGroupData(Number(params.slug));
-  const bills = await getBillsByGroup(Number(params.slug));
-
-  // if (!group) {
-  //   return null;
-  // }
+  if (!group) {
+    notFound();
+  }
 
   return (
     <div className="flex w-full flex-col items-center gap-10">
-      <h1 className="text-7xl font-bold">{groupData?.title}</h1>
-      <p>{groupData?.description}</p>
+      <h1 className="text-7xl font-bold">{group?.title}</h1>
+      <p>{group?.description}</p>
       <div className="flex justify-center gap-4">
+        <AddBillDialog group={group} />
         <Suspense fallback={<span>Loading...</span>}>
-          <SettleUp groupId={groupData.id} />
+          <SettleUp groupId={group.id} />
         </Suspense>
-        <MembersCard groupId={groupData.id} members={groupData.groupMembers} />
+        <MembersCard groupId={group.id} members={group.groupMembers} />
       </div>
-      <BillsTable bills={bills} />
+      <BillsTable bills={group.bills} />
     </div>
   );
 }

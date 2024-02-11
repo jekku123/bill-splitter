@@ -31,7 +31,7 @@ export async function createBill(values: BillFormSchema, groupId: number) {
 
     values.payments.forEach(async (payment) => {
       await insertPayment({
-        billId: newBill[0].id,
+        billId: newBill[0].billId,
         payerId: Number(payment.payerId),
         amount: payment.amount,
       });
@@ -39,7 +39,7 @@ export async function createBill(values: BillFormSchema, groupId: number) {
 
     values.shares.forEach(async (share) => {
       await insertShare({
-        billId: newBill[0].id,
+        billId: newBill[0].billId,
         groupMemberId: Number(share.groupMemberId),
         amount: share.amount,
       });

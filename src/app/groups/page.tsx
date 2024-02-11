@@ -1,7 +1,7 @@
 import CreateGroupDialog from "@/components/create-group";
 import { auth } from "@/lib/auth/auth";
 
-import { getUsersGroups } from "@/lib/actions/group";
+import { getGroupsByUserId } from "@/drizzle/db";
 import GroupCard from "../../components/group-card";
 
 export default async function GroupsPage() {
@@ -11,7 +11,7 @@ export default async function GroupsPage() {
     return null;
   }
 
-  const groups = await getUsersGroups(Number(session.user.id));
+  const groups = await getGroupsByUserId(Number(session.user.id));
 
   return (
     <div className="flex w-full flex-col items-center gap-10">

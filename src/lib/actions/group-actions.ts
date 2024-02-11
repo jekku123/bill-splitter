@@ -5,13 +5,22 @@ import { revalidatePath } from "next/cache";
 
 import {
   deleteGroup,
-  getGroupsByUser,
   insertGroup,
   insertGroupMember,
 } from "../../drizzle/data-access";
 import { NewGroup } from "../../drizzle/schema";
 
-export async function createGroup(userId: string, values: GroupFormValues) {
+export interface GroupActionResponse {
+  success: boolean;
+  errors?: {
+    message: string;
+  };
+}
+
+export async function createGroupAction(
+  userId: string,
+  values: GroupFormValues,
+): Promise<GroupActionResponse> {
   const newGroup: NewGroup = {
     creatorId: parseInt(userId),
     title: values.name,
@@ -31,21 +40,11 @@ export async function createGroup(userId: string, values: GroupFormValues) {
       };
     }
 
-    const newGroupMember = await insertGroupMember({
+    await insertGroupMember({
       username: "You",
       groupId: group[0].id,
       userId: parseInt(userId),
     });
-
-    if (!newGroupMember.at(0)) {
-      return {
-        success: false,
-        errors: {
-          message:
-            "Could not create group at this time. Please try again later.",
-        },
-      };
-    }
 
     revalidatePath("/groups");
 
@@ -63,20 +62,9 @@ export async function createGroup(userId: string, values: GroupFormValues) {
   }
 }
 
-export async function getUsersGroups(userId: number) {
-  try {
-    const groups = await getGroupsByUser(userId);
-
-    if (!groups.at(0)) return null;
-
-    return groups;
-  } catch (error) {
-    console.error("error", error);
-    return null;
-  }
-}
-
-export async function removeGroup(groupId: number) {
+export async function removeGroupAction(
+  groupId: number,
+): Promise<GroupActionResponse> {
   try {
     await deleteGroup(groupId);
     revalidatePath("/groups");
@@ -94,28 +82,18 @@ export async function removeGroup(groupId: number) {
   }
 }
 
-export async function addGroupMember({
+export async function addGroupMemberAction({
   username,
   groupId,
 }: {
   username: string;
   groupId: number;
-}) {
+}): Promise<GroupActionResponse> {
   try {
-    const newGroupMember = await insertGroupMember({
+    await insertGroupMember({
       username,
       groupId,
     });
-
-    if (!newGroupMember) {
-      return {
-        success: false,
-        errors: {
-          message:
-            "Could not add user to group at this time. Please try again later.",
-        },
-      };
-    }
 
     revalidatePath(`/groups`);
 

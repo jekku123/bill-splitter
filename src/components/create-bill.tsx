@@ -28,8 +28,8 @@ import {
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
-import { GroupData } from "@/drizzle/data-access";
-import { createBill, removeBill } from "@/lib/actions/bills";
+import { GroupDataProps } from "@/drizzle/data-access";
+import { createBill, removeBill } from "@/lib/actions/bill-actions";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -85,8 +85,8 @@ const billFormSchema = z
   );
 export type BillFormSchema = z.infer<typeof billFormSchema>;
 
-export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
-  const { groupMembers, ...group } = groupData;
+export default function AddBillDialog({ group }: { group: GroupDataProps }) {
+  const { groupMembers } = group;
 
   const [open, setOpen] = useState(false);
 
@@ -140,7 +140,7 @@ export default function AddBillDialog({ groupData }: { groupData: GroupData }) {
     toast("Bill added", {
       action: {
         label: "Undo",
-        onClick: async () => await removeBill(result.data!.id),
+        onClick: async () => await removeBill(result.data!.billId),
       },
     });
 

@@ -1,3 +1,4 @@
+import { GroupMembersWithRelatedData, MemberTotals } from "@/types/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -25,4 +26,17 @@ export function formatDateComplete(input: string, locale: string): string {
     timeZoneName: "short",
     hour12: false,
   });
+}
+
+export function reduceMemberTotals(
+  member: GroupMembersWithRelatedData,
+): MemberTotals {
+  const memberTotal =
+    member.payments.reduce((acc, payment) => acc + Number(payment.amount), 0) -
+    member.shares.reduce((acc, share) => acc + Number(share.amount), 0);
+
+  return {
+    member,
+    total: memberTotal,
+  };
 }

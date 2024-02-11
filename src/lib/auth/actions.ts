@@ -85,9 +85,8 @@ export async function register(fields: RegisterFormValues) {
 
 export async function login(fields: LoginFormValues) {
   try {
-    const user = await signIn("credentials", fields);
+    await signIn("credentials", fields);
     return {
-      user: user,
       success: true,
       error: undefined,
     };
