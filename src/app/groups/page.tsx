@@ -1,6 +1,7 @@
 import CreateGroupDialog from "@/components/create-group";
 import { auth } from "@/lib/auth/auth";
 
+import { TypographyH1, TypographyP } from "@/components/ui/typography";
 import { getGroupsByUserId } from "@/drizzle/db";
 import GroupCard from "../../components/group-card";
 
@@ -15,9 +16,8 @@ export default async function GroupsPage() {
 
   return (
     <div className="flex w-full flex-col items-center gap-10">
-      <h1 className="text-7xl font-bold">Groups</h1>
+      <TypographyH1 className="text-7xl font-bold">Groups</TypographyH1>
       <CreateGroupDialog user={session.user} />
-
       {groups ? (
         <ul className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {groups.map((group) => (
@@ -25,7 +25,7 @@ export default async function GroupsPage() {
           ))}
         </ul>
       ) : (
-        <p>No groups found</p>
+        <TypographyP>No groups found</TypographyP>
       )}
     </div>
   );

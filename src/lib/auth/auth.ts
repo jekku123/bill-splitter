@@ -3,6 +3,7 @@ import GitHub from "@auth/core/providers/github";
 import { compare } from "bcrypt";
 import NextAuth from "next-auth";
 import { getUserByEmail, insertUser } from "../../drizzle/data-access";
+import { githubId, githubSecret, nextAuthSecret } from "../env";
 import { authConfig } from "./auth.config";
 
 export const {
@@ -11,11 +12,11 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: nextAuthSecret,
   providers: [
     GitHub({
-      clientId: process.env.AUTH_GITHUB_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET,
+      clientId: githubId,
+      clientSecret: githubSecret,
     }),
     Credentials({
       credentials: {

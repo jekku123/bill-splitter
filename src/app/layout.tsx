@@ -2,7 +2,6 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
-import { auth } from "@/lib/auth/auth";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -19,12 +18,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await auth();
-
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers user={user}>
+        <Providers>
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="mx-auto flex w-full max-w-5xl grow px-6 py-4">

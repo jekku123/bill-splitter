@@ -1,3 +1,4 @@
+import { MemberTotals } from "@/types/types";
 import {
   Card,
   CardContent,
@@ -6,15 +7,22 @@ import {
   CardTitle,
 } from "./ui/card";
 
-export default function UserTotal({ total }: { total: number }) {
+export default function UserTotal({
+  userTotals,
+}: {
+  userTotals: MemberTotals;
+}) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Total</CardTitle>
-        <CardDescription>Your total debt or credit</CardDescription>
+        <CardDescription>How much have i spent?</CardDescription>
       </CardHeader>
       <CardContent>
-        <span>{total}</span>
+        <ul>
+          <li>Spent: {userTotals.totalShares}</li>
+          <li>Credit: {userTotals.total}</li>
+        </ul>
       </CardContent>
     </Card>
   );

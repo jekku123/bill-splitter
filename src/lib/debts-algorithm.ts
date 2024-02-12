@@ -1,9 +1,12 @@
 import { Debt } from "@/types/types";
-import { getMemberTotals } from "../drizzle/data-access";
+import { GroupDataProps } from "../drizzle/data-access";
+import { reduceMemberTotals } from "./utils";
 
-export async function getSettleUp(groupId: number): Promise<Debt[] | null> {
+export function getSettleUp(group: GroupDataProps): Debt[] | null {
   try {
-    const memberTotals = await getMemberTotals(groupId);
+    const memberTotals = group.groupMembers.map((member) =>
+      reduceMemberTotals(member),
+    );
     const memberTotalsSorted = memberTotals.sort((a, b) => a.total - b.total);
 
     let solvedDebts = [];

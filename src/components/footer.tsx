@@ -1,7 +1,9 @@
+import { TypographySmall } from "./ui/typography";
+
 export default function Footer() {
   return (
-    <footer className="text-center p-4">
-      <small>JM Productions</small>
+    <footer className="p-4 text-center">
+      <TypographySmall>JM Productions</TypographySmall>
     </footer>
   );
 }

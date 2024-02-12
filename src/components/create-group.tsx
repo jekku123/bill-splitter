@@ -16,6 +16,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import { DialogClose } from "@radix-ui/react-dialog";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { createGroupAction } from "@/lib/actions/group-actions";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { Textarea } from "./ui/textarea";
@@ -61,14 +76,14 @@ export default function CreateGroupDialog({ user }: { user: User }) {
   } = form;
 
   async function onSubmit(values: GroupFormValues) {
-    const result = await createGroup(user.id!, values);
+    const result = await createGroupAction(user.id!, values);
 
     if (!result.success) {
       toast("Failed to create group", {});
     }
 
     toast("Group created", {});
-
+    form.reset();
     setOpen(false);
     // if (result.errors) {
     //   const errors = result.errors;
@@ -143,7 +158,7 @@ export default function CreateGroupDialog({ user }: { user: User }) {
                 </FormItem>
               )}
             />
-            <div className="flex w-full justify-end gap-4">
+            <div className="flex w-full justify-center gap-4 sm:justify-end">
               <Button
                 variant="default"
                 type="submit"
@@ -165,16 +180,3 @@ export default function CreateGroupDialog({ user }: { user: User }) {
     </Dialog>
   );
 }
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { createGroup } from "@/lib/actions/group-actions";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { useState } from "react";
-import { toast } from "sonner";

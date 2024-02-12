@@ -1,5 +1,5 @@
 import { reduceMemberTotals } from "@/lib/utils";
-import { MemberTotals } from "@/types/types";
+import { MemberTotal } from "@/types/types";
 import { and, eq } from "drizzle-orm";
 import { db } from ".";
 import {
@@ -111,7 +111,9 @@ async function getGroupData(groupId: number) {
 
 export type GroupDataProps = Awaited<ReturnType<typeof getGroupData>>;
 
-async function getGroupsByUser(userId: number): Promise<GroupDataProps[]> {
+async function getGroupsByUser(
+  userId: number,
+): Promise<GroupDataProps[] | void> {
   const res = await db.query.groups.findMany({
     where: eq(groups.creatorId, userId),
 
@@ -131,6 +133,10 @@ async function getGroupsByUser(userId: number): Promise<GroupDataProps[]> {
       },
     },
   });
+
+  if (!res.at(0)) {
+    throw new Error("No groups found");
+  }
 
   return res;
 }
@@ -232,7 +238,7 @@ async function deleteShare(shareId: number): Promise<void> {
   await db.delete(shares).where(eq(shares.id, shareId));
 }
 
-async function getMemberTotals(groupId: number): Promise<MemberTotals[]> {
+async function getMemberTotals(groupId: number): Promise<MemberTotal[]> {
   const res = await db.query.groupMembers.findMany({
     where: eq(groupMembers.groupId, groupId),
     with: {

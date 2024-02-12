@@ -5,11 +5,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getSettleUp } from "@/lib/debts";
+import { GroupDataProps } from "@/drizzle/data-access";
+import { getSettleUp } from "@/lib/debts-algorithm";
 import { ArrowRight } from "lucide-react";
 
-export async function SettleUp({ groupId }: { groupId: number }) {
-  const debts = await getSettleUp(groupId);
+export async function SettleUp({ group }: { group: GroupDataProps }) {
+  const debts = getSettleUp(group);
 
   return (
     <Card>
@@ -19,7 +20,7 @@ export async function SettleUp({ groupId }: { groupId: number }) {
       </CardHeader>
       <CardContent>
         <ul>
-          {debts ? (
+          {debts?.at(0) ? (
             debts.map((debt, idx) => (
               <li key={idx} className="flex gap-2">
                 <span>{debt.debtor.username}</span>

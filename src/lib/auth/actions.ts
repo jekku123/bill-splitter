@@ -46,9 +46,9 @@ export const githubLogin = async () => {
   await signIn("github");
 };
 
-export async function register(fields: RegisterFormValues) {
+export async function register(values: RegisterFormValues) {
   try {
-    const { email, password } = await registerFormSchema.parseAsync(fields);
+    const { email, password } = await registerFormSchema.parseAsync(values);
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -83,9 +83,9 @@ export async function register(fields: RegisterFormValues) {
   }
 }
 
-export async function login(fields: LoginFormValues) {
+export async function login(values: LoginFormValues) {
   try {
-    await signIn("credentials", fields);
+    await signIn("credentials", values);
     return {
       success: true,
       error: undefined,

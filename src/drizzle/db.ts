@@ -6,12 +6,9 @@ import {
   getGroupsByUser,
 } from "../drizzle/data-access";
 
-export async function getGroup(
-  groupId: number,
-): Promise<GroupDataProps | null> {
+export async function getGroup(groupId: number) {
   try {
     const groups = await getGroupData(groupId);
-    if (!groups) return null;
     return groups;
   } catch (error) {
     console.error("error", error);

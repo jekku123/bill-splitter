@@ -29,7 +29,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { GroupDataProps } from "@/drizzle/data-access";
-import { createBill, removeBill } from "@/lib/actions/bill-actions";
+import { createBill } from "@/lib/actions/bill-actions";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -42,6 +42,7 @@ import {
 } from "./ui/select";
 import { Separator } from "./ui/separator";
 import { Textarea } from "./ui/textarea";
+import { TypographyH4 } from "./ui/typography";
 
 const billFormSchema = z
   .object({
@@ -130,32 +131,33 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
   async function onSubmit(values: BillFormSchema) {
     const groupId = group?.id!;
 
-    const result = await createBill({ ...values }, groupId);
-
-    if (!result.success) {
-      toast(result.error);
-      return;
-    }
-
-    toast("Bill added", {
-      action: {
-        label: "Undo",
-        onClick: async () => await removeBill(result.data!.billId),
+    toast.promise(
+      async () => {
+        await createBill({ ...values }, groupId);
       },
-    });
+      {
+        loading: "Loading...",
+        success: () => {
+          reset();
+          setOpen(false);
 
-    reset();
-    setOpen(false);
+          return `Bill has been added`;
+        },
+        error: "Error while adding bill",
+      },
+    );
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="icon" variant="outline" className="rounded-full">
-          <Plus />
-          <span className="sr-only">Add Bill</span>
-        </Button>
-      </DialogTrigger>
+      <div className="flex items-center gap-2">
+        <span className="">Add Bill</span>
+        <DialogTrigger asChild>
+          <Button size="icon" variant="outline" className="rounded-full">
+            <Plus />
+          </Button>
+        </DialogTrigger>
+      </div>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Add Bill</DialogTitle>
@@ -243,7 +245,7 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
             <Separator />
 
             <div className="flex gap-4">
-              <h2 className="text-2xl">Payments</h2>
+              <TypographyH4 className="text-2xl">Payments</TypographyH4>
               <Button
                 type="button"
                 size="icon"
@@ -339,7 +341,7 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
             <Separator />
 
             <div className="flex gap-4">
-              <h2 className="text-2xl">Shares</h2>
+              <TypographyH4 className="text-2xl">Shares</TypographyH4>
               <Button
                 type="button"
                 size="icon"
@@ -431,6 +433,9 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
             })}
 
             <div className="flex w-full justify-end gap-4">
+              <Button type="button" onClick={() => reset()} variant="outline">
+                Clear
+              </Button>
               <Button
                 variant="default"
                 type="submit"
@@ -451,9 +456,6 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="button" onClick={() => reset()} variant="secondary">
-                Clear
-              </Button>
             </div>
           </form>
         </Form>

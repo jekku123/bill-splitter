@@ -12,6 +12,7 @@ import { auth } from "@/lib/auth/auth";
 import { Cat } from "lucide-react";
 import Link from "next/link";
 import { ModeToggle } from "./mode-toggle";
+import { TypographyH3 } from "./ui/typography";
 
 export default async function Header() {
   const session = await auth();
@@ -21,7 +22,9 @@ export default async function Header() {
     <header className="w-full flex-shrink-0">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
         <div className="flex w-1/3 items-center ">
-          <h1 className="text-2xl font-bold">Bill Splitter</h1>
+          <TypographyH3 className="text-2xl font-bold">
+            Bill Splitter
+          </TypographyH3>
         </div>
         <nav className="flex w-1/3 flex-shrink-0 justify-center ">
           <ul className="flex gap-4">

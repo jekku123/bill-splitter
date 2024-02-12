@@ -23,11 +23,11 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { addGroupMemberAction } from "@/lib/actions/group-actions";
 import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -78,9 +78,14 @@ export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Add Member</Button>
-      </DialogTrigger>
+      <div className="flex items-center gap-2">
+        <span className="">Add Member</span>
+        <DialogTrigger asChild>
+          <Button size="icon" variant="outline" className="rounded-full">
+            <Plus />
+          </Button>
+        </DialogTrigger>
+      </div>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Member</DialogTitle>
@@ -92,17 +97,17 @@ export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
               control={control}
               name="username"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center gap-4">
-                  <FormLabel className="text-right">Username</FormLabel>
+                <FormItem>
                   <FormControl>
                     <Input
                       className={cn(
-                        "col-span-3",
+                        "",
                         !!errors.username
                           ? "border-destructive focus-visible:ring-destructive"
                           : "",
                       )}
                       autoFocus
+                      placeholder="Name"
                       {...field}
                     />
                   </FormControl>

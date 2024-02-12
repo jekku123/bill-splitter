@@ -1,18 +1,8 @@
-import { Bill, Group, GroupMember, Payment, Share } from "../drizzle/schema";
+import { Bill, GroupMember, Payment, Share } from "../drizzle/schema";
 
-export interface BillWithRelatedData extends Bill {
+export interface BillType extends Bill {
   payments: Payment[];
   shares: Share[];
-}
-
-export interface GroupMembersWithRelatedData extends GroupMember {
-  payments: Payment[];
-  shares: Share[];
-}
-
-export interface GroupDataType extends Group {
-  groupMembers: GroupMembersWithRelatedData[];
-  bills: BillWithRelatedData[];
 }
 
 export interface Debt {
@@ -21,7 +11,18 @@ export interface Debt {
   amount: number;
 }
 
-export interface MemberTotals {
-  member: GroupMembersWithRelatedData;
+export interface MemberTotal {
+  member: GroupMemberType;
   total: number;
+}
+
+export interface MemberTotals {
+  total: number;
+  totalPayments: number;
+  totalShares: number;
+}
+
+export interface GroupMemberType extends GroupMember {
+  payments: Payment[];
+  shares: Share[];
 }
