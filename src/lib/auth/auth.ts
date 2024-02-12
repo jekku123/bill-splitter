@@ -12,7 +12,7 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  secret: nextAuthSecret,
+  secret: nextAuthSecret || process.env.NEXTAUTH_SECRET,
   providers: [
     GitHub({
       clientId: githubId,
