@@ -1,4 +1,3 @@
-import { postgresUrl } from "@/lib/env";
 import "dotenv/config";
 
 import { defineConfig } from "drizzle-kit";
@@ -8,7 +7,7 @@ export default defineConfig({
   out: "./migrations",
   driver: "pg",
   dbCredentials: {
-    connectionString: postgresUrl! + "?sslmode=require",
+    connectionString: process.env.POSTGRES_URL! + "?sslmode=require",
   },
   verbose: true,
   strict: true,
