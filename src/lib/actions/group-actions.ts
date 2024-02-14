@@ -56,7 +56,7 @@ export async function createGroupAction(
     return {
       success: false,
       errors: {
-        message: "Could not create group at this time. Please try again later.",
+        message: "Could not insert group at this time. Please try again later.",
       },
     };
   }

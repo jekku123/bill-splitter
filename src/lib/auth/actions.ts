@@ -1,11 +1,10 @@
 "use server";
 
-import { LoginFormValues } from "@/app/(auth)/login/form";
-
 import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
 import { ZodError } from "zod";
 import { getUserByEmail, insertUser } from "../../drizzle/data-access";
+import { LoginFormValues } from "../zod/login-form";
 import { RegisterFormValues, registerFormSchema } from "../zod/register-form";
 import { signIn, signOut } from "./auth";
 
