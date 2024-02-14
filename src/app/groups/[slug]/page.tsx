@@ -49,12 +49,12 @@ export default async function GroupPage({
         </div>
       </div>
       <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <MembersCard groupId={group.id} members={group.groupMembers} />
         <UserTotal userTotals={userTotals} />
         <GroupTotals total={groupTotal} />
         <Suspense fallback={<span>Loading...</span>}>
           <SettleUp group={group} />
         </Suspense>
-        <MembersCard groupId={group.id} members={group.groupMembers} />
       </div>
       <BillsTable group={group} />
     </div>

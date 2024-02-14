@@ -157,7 +157,7 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
           </Button>
         </DialogTrigger>
       </div>
-      <DialogContent className="max-h-screen overflow-y-scroll sm:max-w-[425px]">
+      <DialogContent className="max-h-screen overflow-y-auto sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Add Bill</DialogTitle>
           <DialogDescription>
