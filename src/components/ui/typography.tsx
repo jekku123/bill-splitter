@@ -95,7 +95,7 @@ export function TypographyLead({ children, className }: TypographyProps) {
 
 export function TypographyList({ children, className }: TypographyProps) {
   return (
-    <ul className={cn("my-6 ml-6 list-disc [&>li]:mt-2", className)}>
+    <ul className={cn("my-3 ml-6 list-disc [&>li]:mt-2", className)}>
       {children}
     </ul>
   );

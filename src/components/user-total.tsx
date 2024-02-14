@@ -20,7 +20,8 @@ export default function UserTotal({
       </CardHeader>
       <CardContent>
         <ul>
-          <li>Spent: {userTotals.totalShares}</li>
+          <li>Payments: {userTotals.totalPayments}</li>
+          <li>Shares: {userTotals.totalShares}</li>
           <li>Credit: {userTotals.total}</li>
         </ul>
       </CardContent>

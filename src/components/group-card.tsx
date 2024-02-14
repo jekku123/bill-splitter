@@ -11,6 +11,7 @@ import { removeGroupAction } from "@/lib/actions/group-actions";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { TypographyH4, TypographyList } from "./ui/typography";
 
 export default async function GroupCard({ group }: { group: GroupDataProps }) {
   return (
@@ -28,7 +29,15 @@ export default async function GroupCard({ group }: { group: GroupDataProps }) {
         <CardDescription>{group.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button asChild className="w-full">
+        <TypographyH4>Members</TypographyH4>
+        {group.groupMembers.length > 0 && (
+          <TypographyList>
+            {group.groupMembers.map((member) => (
+              <li key={member.id}>{member.username}</li>
+            ))}
+          </TypographyList>
+        )}
+        <Button asChild className="mt-3 w-full">
           <Link href={`/groups/${group.id}`}>View group</Link>
         </Button>
       </CardContent>

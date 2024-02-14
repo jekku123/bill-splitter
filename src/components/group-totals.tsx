@@ -13,7 +13,9 @@ export default function GroupTotals({ total }: { total: number }) {
         <CardTitle>Group Totals</CardTitle>
         <CardDescription>Groups spendings so far</CardDescription>
       </CardHeader>
-      <CardContent>{total}</CardContent>
+      <CardContent>
+        {total === 0 ? <span>No spendings</span> : <span>{total}</span>}
+      </CardContent>
     </Card>
   );
 }
