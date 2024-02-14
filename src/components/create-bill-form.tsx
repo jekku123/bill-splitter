@@ -30,9 +30,9 @@ import { cn } from "@/lib/utils";
 
 import { GroupDataProps } from "@/drizzle/data-access";
 import { createBill } from "@/lib/actions/bill-actions";
+import { BillFormValues, billFormSchema } from "@/lib/zod/bill-form";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
 import {
   Select,
   SelectContent,
@@ -43,7 +43,6 @@ import {
 import { Separator } from "./ui/separator";
 import { Textarea } from "./ui/textarea";
 import { TypographyH4 } from "./ui/typography";
-import { BillFormValues, billFormSchema } from "@/lib/zod/bill-form";
 
 export default function AddBillDialog({ group }: { group: GroupDataProps }) {
   const { groupMembers } = group;

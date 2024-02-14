@@ -1,4 +1,4 @@
-import CreateGroupDialog from "@/components/create-group";
+import CreateGroupDialog from "@/components/create-group-form";
 import { auth } from "@/lib/auth/auth";
 
 import { TypographyH1, TypographyP } from "@/components/ui/typography";

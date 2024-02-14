@@ -33,11 +33,16 @@ export const billFormSchema = z
         0,
       );
 
-      return totalShares === parseFloat(data.amount);
+      const totalPayments = data.payments.reduce(
+        (acc, payment) => acc + parseFloat(payment.amount),
+        0,
+      );
+
+      return totalShares === totalPayments;
     },
     {
-      message: "Total payments must be equal to the amount",
-      path: ["amount"],
+      message: "Total shares must be equal to total payments",
+      path: ["shares", 0, "amount"],
     },
   );
 export type BillFormValues = z.infer<typeof billFormSchema>;

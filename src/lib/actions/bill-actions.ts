@@ -1,6 +1,5 @@
 "use server";
 
-import { BillFormSchema } from "@/components/create-bill-form";
 import { revalidatePath } from "next/cache";
 import {
   deleteBill,
@@ -9,8 +8,9 @@ import {
   insertShare,
 } from "../../drizzle/data-access";
 import { NewBill } from "../../drizzle/schema";
+import { BillFormValues } from "../zod/bill-form";
 
-export async function createBill(values: BillFormSchema, groupId: number) {
+export async function createBill(values: BillFormValues, groupId: number) {
   const billData: NewBill = {
     groupId: groupId,
     title: values.title,

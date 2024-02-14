@@ -1,6 +1,6 @@
 "use server";
 
-import { GroupFormValues } from "@/components/create-group";
+import { GroupFormValues } from "@/components/create-group-form";
 import { revalidatePath } from "next/cache";
 
 import {
