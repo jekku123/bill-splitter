@@ -21,53 +21,29 @@ import {
 import GitHubLogin from "@/components/ui/github-login";
 import { Input } from "@/components/ui/input";
 import { register } from "@/lib/auth/actions";
+import {
+  RegisterFormValues,
+  registerFormSchema,
+} from "@/lib/zod/register-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { z } from "zod";
-
 const defaultValues = {
+  username: "",
   email: "",
   password: "",
   confirmPassword: "",
 };
-
-const registerFormSchema = z
-  .object({
-    email: z.string().email({
-      message: "Please enter a valid email address",
-    }),
-    password: z
-      .string()
-      .min(1, {
-        message: "Please enter a password",
-      })
-      .min(4, {
-        message: "Password must be at least 4 characters",
-      }),
-    confirmPassword: z.string().min(1, {
-      message: "Please confirm your password",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-export type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
 export default function RegisterForm() {
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
     defaultValues,
   });
-
-  const [generalError, setGeneralError] = useState("");
 
   const router = useRouter();
 
@@ -76,7 +52,13 @@ export default function RegisterForm() {
 
     if (result.errors) {
       const errors = result.errors;
-      if (errors.email) {
+
+      if (errors.username) {
+        form.setError("username", {
+          message: errors.username,
+          type: "server",
+        });
+      } else if (errors.email) {
         form.setError("email", {
           message: errors.email,
           type: "server",
@@ -92,14 +74,12 @@ export default function RegisterForm() {
           type: "server",
         });
       } else if (errors.message) {
-        setGeneralError(errors.message);
-      } else {
-        alert("An unknown error occurred");
+        toast.error(errors.message);
       }
     }
 
     if (result.success) {
-      toast("Account created successfully! Please login.");
+      toast.success("Account created successfully! Please login.");
       router.push("/login");
     }
   }
@@ -109,12 +89,33 @@ export default function RegisterForm() {
       <CardHeader className="space-y-2 text-center">
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
-          Enter your email below to create your account
+          And start splitting bills with your friends
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      className={
+                        !!form.formState.errors.username
+                          ? "border-destructive focus-visible:ring-destructive"
+                          : ""
+                      }
+                      autoFocus
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -128,7 +129,6 @@ export default function RegisterForm() {
                           ? "border-destructive focus-visible:ring-destructive"
                           : ""
                       }
-                      autoFocus
                       {...field}
                     />
                   </FormControl>
@@ -203,7 +203,7 @@ export default function RegisterForm() {
         </div>
         <div className="grid grid-cols-2 gap-6">
           <GitHubLogin />
-          <Button variant="outline" className="w-full">
+          <Button disabled variant="outline" className="w-full">
             <Icons.google className="mr-2 h-4 w-4" />
             Google
           </Button>

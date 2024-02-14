@@ -143,7 +143,7 @@ export function LoginForm() {
         </div>
         <div className="grid grid-cols-2 gap-6">
           <GitHubLogin />
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" disabled className="w-full">
             <Icons.google className="mr-2 h-4 w-4" />
             Google
           </Button>

@@ -40,7 +40,7 @@ export default async function GroupPage({
 
   return (
     <div className="flex w-full flex-col items-center gap-10">
-      <div className="flex w-full items-center justify-between gap-2">
+      <div className="flex w-full flex-col items-center justify-between gap-2 sm:flex-row">
         <TypographyH1>{group?.title}</TypographyH1>
         {/* <TypographyP>{group?.description}</TypographyP> */}
         <div className="flex items-center gap-4">

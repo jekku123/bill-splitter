@@ -1,71 +1,45 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { logout } from "@/lib/auth/actions";
 import { auth } from "@/lib/auth/auth";
-import { Cat } from "lucide-react";
 import Link from "next/link";
+import { MobileMenu } from "./mobile-menu";
 import { ModeToggle } from "./mode-toggle";
 import { TypographyH3 } from "./ui/typography";
+import { UserMenu } from "./user-menu";
 
 export default async function Header() {
   const session = await auth();
-  const userImage = session?.user.image as string;
+  const user = session?.user;
 
   return (
     <header className="w-full flex-shrink-0">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
-        <div className="flex w-1/3 items-center ">
-          <TypographyH3 className="text-2xl font-bold">
+        <div className="flex w-1/3 items-center">
+          <MobileMenu className="z-50 flex sm:hidden" />
+          <TypographyH3 className="hidden text-2xl font-bold sm:flex">
             Bill Splitter
           </TypographyH3>
         </div>
-        <nav className="flex w-1/3 flex-shrink-0 justify-center ">
-          <ul className="flex gap-4">
-            <li>
-              <Link href="/">Home</Link>
-            </li>
-            <li>
-              <Link href="/groups">Groups</Link>
-            </li>
-          </ul>
-        </nav>
-        <div className="flex w-1/3 items-center justify-end space-x-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              {session && (
-                <Avatar>
-                  <AvatarImage src={userImage} alt="user" />
-                  <AvatarFallback>
-                    <Cat />
-                  </AvatarFallback>
-                </Avatar>
-              )}
-            </DropdownMenuTrigger>
+        <Nav />
 
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Groups</DropdownMenuItem>
-              <DropdownMenuItem>Bills</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <form action={logout}>
-                  <button type="submit">Logout</button>
-                </form>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="flex w-1/3 items-center justify-end space-x-4">
+          <UserMenu user={user} />
           <ModeToggle />
         </div>
       </div>
     </header>
+  );
+}
+
+function Nav() {
+  return (
+    <nav className="hidden w-1/3 flex-shrink-0 justify-center md:flex ">
+      <ul className="flex gap-4">
+        <li>
+          <Link href="/">Home</Link>
+        </li>
+        <li>
+          <Link href="/groups">Groups</Link>
+        </li>
+      </ul>
+    </nav>
   );
 }

@@ -79,7 +79,8 @@ export default function CreateGroupDialog({ user }: { user: User }) {
     const result = await createGroupAction(user.id!, values);
 
     if (!result.success) {
-      toast("Failed to create group", {});
+      toast("Failed to create group");
+      return;
     }
 
     toast("Group created", {});

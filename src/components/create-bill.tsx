@@ -140,7 +140,6 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
         success: () => {
           reset();
           setOpen(false);
-
           return `Bill has been added`;
         },
         error: "Error while adding bill",

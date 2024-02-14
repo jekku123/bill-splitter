@@ -68,10 +68,11 @@ export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
     const result = await addGroupMemberAction({ username, groupId });
 
     if (!result.success) {
-      toast("Failed to add member", {});
+      toast("Failed to add member");
+      return;
     }
 
-    toast("Member added", {});
+    toast("Member added");
     reset();
     setOpen(false);
   }

@@ -38,6 +38,7 @@ export const {
         if (passwordCorrect) {
           return {
             id: user.id.toString(),
+            name: user.username,
             email: user.email,
           };
         }
