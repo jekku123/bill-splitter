@@ -15,7 +15,9 @@ export async function createBill(values: BillFormValues, groupId: number) {
     groupId: groupId,
     title: values.title,
     description: values.description,
-    amount: values.amount,
+    amount: values.payments
+      .reduce((acc, payment) => acc + parseFloat(payment.amount), 0)
+      .toString(),
   };
 
   try {

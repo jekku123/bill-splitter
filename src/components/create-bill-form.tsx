@@ -54,7 +54,6 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
     defaultValues: {
       title: "",
       description: "",
-      amount: "",
       payments: [],
       shares: [],
     },
@@ -104,6 +103,12 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
       },
     );
   }
+
+  const totalCost = watch("payments", []).reduce(
+    (acc, payment) =>
+      acc + (payment.amount !== "" ? parseFloat(payment.amount) : 0),
+    0,
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -174,7 +179,7 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={control}
               name="amount"
               render={({ field }) => (
@@ -197,11 +202,11 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <Separator />
 
-            <div className="flex gap-4">
+            <div className="flex items-center justify-between gap-4">
               <TypographyH4 className="text-2xl">Payments</TypographyH4>
               <Button
                 type="button"
@@ -216,7 +221,7 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
                 }
               >
                 <Plus />
-                <span className="sr-only">Add Member</span>
+                <span className="sr-only">Add Payment</span>
               </Button>
             </div>
 
@@ -230,7 +235,7 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
                       control={control}
                       name={`payments.${index}.payerId` as const}
                       render={({ field }) => (
-                        <FormItem className="col-span-1 self-center ">
+                        <FormItem className="col-span-1 self-center">
                           <Select onValueChange={field.onChange}>
                             <FormControl>
                               <SelectTrigger>
@@ -238,14 +243,21 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {groupMembers.map((member, idx) => (
-                                <SelectItem
-                                  key={member.id}
-                                  value={member.id + ""}
-                                >
-                                  {member.username}
-                                </SelectItem>
-                              ))}
+                              {groupMembers.map((member) => {
+                                return (
+                                  <SelectItem
+                                    disabled={watch().payments?.some(
+                                      (payment) =>
+                                        payment.payerId ===
+                                        member.id.toString(),
+                                    )}
+                                    key={member.id}
+                                    value={member.id + ""}
+                                  >
+                                    {member.username}
+                                  </SelectItem>
+                                );
+                              })}
                             </SelectContent>
                           </Select>
 
@@ -297,7 +309,7 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
 
             <Separator />
 
-            <div className="flex gap-4">
+            <div className="flex items-center justify-between gap-4">
               <TypographyH4 className="text-2xl">Shares</TypographyH4>
               <Button
                 type="button"
@@ -312,7 +324,7 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
                 }
               >
                 <Plus />
-                <span className="sr-only">Add Member</span>
+                <span className="sr-only">Add Sharer</span>
               </Button>
             </div>
 
@@ -335,6 +347,11 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
                               {groupMembers.map((member, idx) => (
                                 <SelectItem
                                   key={member.id}
+                                  disabled={watch().shares?.some(
+                                    (share) =>
+                                      share.groupMemberId ===
+                                      member.id.toString(),
+                                  )}
                                   value={member.id + ""}
                                 >
                                   {member.username}
@@ -389,6 +406,10 @@ export default function AddBillDialog({ group }: { group: GroupDataProps }) {
               );
             })}
 
+            <Separator />
+            <TypographyH4 className="text-2xl">
+              Total Cost: {totalCost}
+            </TypographyH4>
             <div className="flex w-full justify-end gap-4">
               <Button type="button" onClick={() => reset()} variant="outline">
                 Clear

@@ -12,7 +12,6 @@ export const billFormSchema = z
         message: "Name must be less than 30 characters",
       }),
     description: z.string().min(1, { message: "Please enter a description" }),
-    amount: z.string().min(1, { message: "Please enter an amount" }),
     payments: z.array(
       z.object({
         payerId: z.string(),
