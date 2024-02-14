@@ -1,6 +1,6 @@
 import AddGroupMemberDialog from "@/components/add-group-member";
 import BillsTable from "@/components/bills-table";
-import AddBillDialog from "@/components/create-bill";
+import AddBillDialog from "@/components/create-bill-form";
 import GroupTotals from "@/components/group-totals";
 import MembersCard from "@/components/members-card";
 import { SettleUp } from "@/components/settle-up";

@@ -27,23 +27,12 @@ import { useForm } from "react-hook-form";
 
 import GitHubLogin from "@/components/ui/github-login";
 import { login } from "@/lib/auth/actions";
-import { z } from "zod";
+import { LoginFormValues, loginFormSchema } from "@/lib/zod/login-form";
 
 const defaultValues = {
   email: "",
   password: "",
 };
-
-const loginFormSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  password: z.string().min(1, {
-    message: "Please enter a password",
-  }),
-});
-
-export type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export function LoginForm() {
   const form = useForm<LoginFormValues>({

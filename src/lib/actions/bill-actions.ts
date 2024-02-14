@@ -1,6 +1,6 @@
 "use server";
 
-import { BillFormSchema } from "@/components/create-bill";
+import { BillFormSchema } from "@/components/create-bill-form";
 import { revalidatePath } from "next/cache";
 import {
   deleteBill,
