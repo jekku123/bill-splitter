@@ -1,6 +1,5 @@
 "use server";
 
-import { GroupFormValues } from "@/components/create-group-form";
 import { revalidatePath } from "next/cache";
 
 import {
@@ -9,6 +8,7 @@ import {
   insertGroupMember,
 } from "../../drizzle/data-access";
 import { NewGroup } from "../../drizzle/schema";
+import { GroupFormValues } from "../zod/group-form";
 
 export interface GroupActionResponse {
   success: boolean;
