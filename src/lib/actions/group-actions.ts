@@ -10,6 +10,7 @@ import {
 } from "../../drizzle/data-access";
 import { NewGroup } from "../../drizzle/schema";
 import { GroupFormValues, groupFormSchema } from "../zod/group-form";
+import { MemberFormValues, memberFormSchema } from "../zod/member-form";
 
 export interface GroupActionResponse {
   success: boolean;
@@ -100,15 +101,17 @@ export async function removeGroupAction(
 }
 
 export async function addGroupMemberAction({
-  username,
+  values,
   groupId,
 }: {
-  username: string;
+  values: MemberFormValues;
   groupId: number;
 }): Promise<GroupActionResponse> {
   try {
+    const validatedValues = memberFormSchema.parse(values);
+
     await insertGroupMember({
-      username,
+      username: validatedValues.username,
       groupId,
     });
 
@@ -119,6 +122,17 @@ export async function addGroupMemberAction({
       errors: undefined,
     };
   } catch (error) {
+    if (error instanceof ZodError) {
+      const zodError = error as ZodError;
+      const errorMap = zodError.flatten().fieldErrors;
+
+      return {
+        success: false,
+        errors: {
+          name: errorMap["username"]?.[0] ?? "",
+        },
+      };
+    }
     return {
       success: false,
       errors: {

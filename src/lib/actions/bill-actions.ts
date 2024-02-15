@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { ZodError } from "zod";
 import {
   deleteBill,
   insertBill,
@@ -8,26 +9,43 @@ import {
   insertShare,
 } from "../../drizzle/data-access";
 import { NewBill } from "../../drizzle/schema";
-import { BillFormValues } from "../zod/bill-form";
+import { BillFormValues, billFormSchema } from "../zod/bill-form";
 
-export async function createBill(values: BillFormValues, groupId: number) {
-  const billData: NewBill = {
-    groupId: groupId,
-    title: values.title,
-    description: values.description,
-    amount: values.payments
-      .reduce((acc, payment) => acc + parseFloat(payment.amount), 0)
-      .toString(),
+// TODO: add Payments and Shares zod error types
+export interface BillActionResponse {
+  success: boolean;
+  errors?: {
+    title?: string;
+    description?: string;
+    message?: string;
   };
+}
 
+export async function createBill(
+  values: BillFormValues,
+  groupId: number,
+): Promise<BillActionResponse> {
   try {
+    const validatedValues = billFormSchema.parse(values);
+
+    const billData: NewBill = {
+      groupId: groupId,
+      title: validatedValues.title,
+      description: validatedValues.description,
+      amount: validatedValues.payments
+        .reduce((acc, payment) => acc + parseFloat(payment.amount), 0)
+        .toString(),
+    };
+
     const newBill = await insertBill(billData);
 
     if (!newBill.at(0)) {
       return {
-        data: undefined,
         success: false,
-        error: "Could not create bill at this time. Please try again later.",
+        errors: {
+          message:
+            "Could not create bill at this time. Please try again later.",
+        },
       };
     }
 
@@ -50,27 +68,43 @@ export async function createBill(values: BillFormValues, groupId: number) {
     revalidatePath(`/groups/${groupId}`);
 
     return {
-      data: newBill[0],
       success: true,
-      error: undefined,
+      errors: undefined,
     };
   } catch (error) {
+    if (error instanceof ZodError) {
+      const zodError = error as ZodError;
+      const errorMap = zodError.flatten().fieldErrors;
+
+      return {
+        success: false,
+        errors: {
+          title: errorMap["title"]?.[0] ?? "",
+          description: errorMap["description"]?.[0] ?? "",
+        },
+      };
+    }
+
     return {
-      data: undefined,
       success: false,
-      error: "Could not create bill at this time. Please try again later.",
+      errors: {
+        message: "Could not create bill at this time. Please try again later.",
+      },
     };
   }
 }
 
-export async function removeBill(billId: number) {
+export async function removeBill(billId: number): Promise<BillActionResponse> {
   try {
     const res = await deleteBill(billId);
 
     if (!res.at(0)) {
       return {
         success: false,
-        error: "Could not delete bill at this time. Please try again later.",
+        errors: {
+          message:
+            "Could not delete bill at this time. Please try again later.",
+        },
       };
     }
 
@@ -78,12 +112,14 @@ export async function removeBill(billId: number) {
 
     return {
       success: true,
-      error: undefined,
+      errors: undefined,
     };
   } catch (error) {
     return {
       success: false,
-      error: "Could not delete bill at this time. Please try again later.",
+      errors: {
+        message: "Could not delete bill at this time. Please try again later.",
+      },
     };
   }
 }

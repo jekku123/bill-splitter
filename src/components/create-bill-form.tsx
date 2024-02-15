@@ -20,7 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { GroupDataProps } from "@/drizzle/data-access";
-import { createBill } from "@/lib/actions/bill-actions";
+import { BillActionResponse, createBill } from "@/lib/actions/bill-actions";
 import { BillFormValues, billFormSchema } from "@/lib/zod/bill-form";
 import { Plus, X } from "lucide-react";
 import { toast } from "sonner";
@@ -87,7 +87,7 @@ export function CreateBillForm({
 
     toast.promise(
       async () => {
-        await createBill({ ...values }, groupId);
+        await createBill(values, groupId);
       },
       {
         loading: "Loading...",
@@ -96,7 +96,29 @@ export function CreateBillForm({
           setOpen(false);
           return `Bill has been added`;
         },
-        error: "Error while adding bill",
+        error: (data: BillActionResponse) => {
+          const { errors } = data;
+
+          if (errors?.title) {
+            form.setError("title", {
+              type: "server",
+              message: errors.title,
+            });
+          }
+          if (errors?.description) {
+            form.setError("description", {
+              type: "server",
+              message: errors.description,
+            });
+          }
+          if (errors?.message) {
+            toast.error(errors.message);
+          }
+
+          // TODO Payments and Shares server errors
+
+          return "Could not create bill at this time. Please try again later.";
+        },
       },
     );
   }

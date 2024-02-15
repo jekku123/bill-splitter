@@ -27,23 +27,9 @@ import {
 } from "@/components/ui/form";
 import { addGroupMemberAction } from "@/lib/actions/group-actions";
 import { cn } from "@/lib/utils";
+import { MemberFormValues, memberFormSchema } from "@/lib/zod/member-form";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
-
-const memberFormSchema = z.object({
-  username: z
-    .string()
-    .min(1, {
-      message: "Please enter a name",
-    })
-    .min(3, { message: "Name must be at least 3 characters" })
-    .max(20, {
-      message: "Name must be less than 20 characters",
-    }),
-});
-
-export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
 export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
   const [open, setOpen] = useState(false);
@@ -63,12 +49,20 @@ export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
   } = form;
 
   async function onSubmit(values: MemberFormValues) {
-    const username = values.username;
-
-    const result = await addGroupMemberAction({ username, groupId });
+    const result = await addGroupMemberAction({ values, groupId });
 
     if (!result.success) {
-      toast("Failed to add member");
+      const { errors } = result;
+
+      if (errors?.name) {
+        form.setError("username", {
+          type: "server",
+          message: errors.name,
+        });
+      }
+      if (errors?.message) {
+        toast.error(errors.message);
+      }
       return;
     }
 
