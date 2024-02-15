@@ -1,6 +1,6 @@
 import AddGroupMemberDialog from "@/components/add-group-member";
 import BillsTable from "@/components/bills-table";
-import AddBillDialog from "@/components/create-bill-form";
+import CreateBillDialog from "@/components/create-bill-dialog";
 import GroupTotals from "@/components/group-totals";
 import MembersCard from "@/components/members-card";
 import { SettleUp } from "@/components/settle-up";
@@ -30,9 +30,7 @@ export default async function GroupPage({
   );
 
   const userTotals = resolveMemberTotals(userMember!);
-
   const memberTotals = group.groupMembers.map(resolveMemberTotals);
-
   const groupTotal = memberTotals.reduce(
     (acc, memberTotal) => acc + memberTotal.totalPayments,
     0,
@@ -42,9 +40,8 @@ export default async function GroupPage({
     <div className="flex w-full flex-col items-center gap-6">
       <div className="flex w-full flex-col justify-between gap-4 sm:flex-row">
         <TypographyH1>{group?.title}</TypographyH1>
-        {/* <TypographyP>{group?.description}</TypographyP> */}
         <div className="flex items-center gap-4">
-          <AddBillDialog group={group} />
+          <CreateBillDialog group={group} />
           <AddGroupMemberDialog groupId={group.id} />
         </div>
       </div>

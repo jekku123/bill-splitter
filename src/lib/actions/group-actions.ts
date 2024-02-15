@@ -2,18 +2,21 @@
 
 import { revalidatePath } from "next/cache";
 
+import { ZodError } from "zod";
 import {
   deleteGroup,
   insertGroup,
   insertGroupMember,
 } from "../../drizzle/data-access";
 import { NewGroup } from "../../drizzle/schema";
-import { GroupFormValues } from "../zod/group-form";
+import { GroupFormValues, groupFormSchema } from "../zod/group-form";
 
 export interface GroupActionResponse {
   success: boolean;
   errors?: {
-    message: string;
+    name?: string;
+    description?: string;
+    message?: string;
   };
 }
 
@@ -21,13 +24,14 @@ export async function createGroupAction(
   userId: string,
   values: GroupFormValues,
 ): Promise<GroupActionResponse> {
-  const newGroup: NewGroup = {
-    creatorId: parseInt(userId),
-    title: values.name,
-    description: values.description,
-  };
-
   try {
+    const validatedValues = groupFormSchema.parse(values);
+
+    const newGroup: NewGroup = {
+      creatorId: parseInt(userId),
+      title: validatedValues.name,
+      description: validatedValues.description,
+    };
     const group = await insertGroup(newGroup);
 
     if (!group.at(0)) {
@@ -53,6 +57,19 @@ export async function createGroupAction(
       errors: undefined,
     };
   } catch (error) {
+    if (error instanceof ZodError) {
+      const zodError = error as ZodError;
+      const errorMap = zodError.flatten().fieldErrors;
+
+      return {
+        success: false,
+        errors: {
+          name: errorMap["name"]?.[0] ?? "",
+          description: errorMap["description"]?.[0] ?? "",
+        },
+      };
+    }
+
     return {
       success: false,
       errors: {

@@ -57,26 +57,32 @@ export default function CreateGroupDialog({ user }: { user: User }) {
 
     if (!result.success) {
       toast("Failed to create group");
+
+      if (result.errors) {
+        const errors = result.errors;
+
+        if (errors.name) {
+          form.setError("name", {
+            message: errors.name,
+            type: "server",
+          });
+        }
+        if (errors.description) {
+          form.setError("description", {
+            message: errors.description,
+            type: "server",
+          });
+        }
+        if (errors.message) {
+          toast.error(errors.message);
+        }
+      }
       return;
     }
 
-    toast("Group created", {});
+    toast.success("Group created");
     form.reset();
     setOpen(false);
-    // if (result.errors) {
-    //   const errors = result.errors;
-    //   if (errors.name) {
-    //     form.setError("name", {
-    //       message: errors.name,
-    //       type: "server",
-    //     });
-    //   } else if (errors.description) {
-    //     form.setError("description", {
-    //       message: errors.description,
-    //       type: "server",
-    //     });
-    //   }
-    // }
   }
 
   return (
@@ -99,19 +105,21 @@ export default function CreateGroupDialog({ user }: { user: User }) {
               render={({ field }) => (
                 <FormItem className="grid grid-cols-4 items-center gap-4">
                   <FormLabel className="text-right">Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      className={cn(
-                        "col-span-3",
-                        !!errors.name
-                          ? "border-destructive focus-visible:ring-destructive"
-                          : "",
-                      )}
-                      autoFocus
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
+                  <div className="col-span-3 flex flex-col gap-1">
+                    <FormControl>
+                      <Input
+                        className={cn(
+                          "w-full",
+                          !!errors.name
+                            ? "border-destructive focus-visible:ring-destructive"
+                            : "",
+                        )}
+                        autoFocus
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
@@ -121,18 +129,20 @@ export default function CreateGroupDialog({ user }: { user: User }) {
               render={({ field }) => (
                 <FormItem className="grid grid-cols-4 items-center gap-4">
                   <FormLabel className="text-right">Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className={cn(
-                        "col-span-3 resize-none",
-                        !!errors.description
-                          ? "border-destructive focus-visible:ring-destructive"
-                          : "",
-                      )}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
+                  <div className="col-span-3 flex flex-col gap-1">
+                    <FormControl>
+                      <Textarea
+                        className={cn(
+                          "col-span-3 resize-none",
+                          !!errors.description
+                            ? "border-destructive focus-visible:ring-destructive"
+                            : "",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
