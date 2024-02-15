@@ -8,8 +8,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { GroupDataProps } from "@/drizzle/data-access";
+import { removeBill } from "@/lib/actions/bill-actions";
 import { formatDate } from "@/lib/utils";
-import { AlertDialogDemo } from "./ui/remove-bill";
+import { ConfirmDialog } from "./confirm-dialog";
 
 export default function BillsTable({ group }: { group: GroupDataProps }) {
   return (
@@ -58,7 +59,11 @@ export default function BillsTable({ group }: { group: GroupDataProps }) {
               </TableCell>
               <TableCell className="text-right">{bill.amount}</TableCell>
               <TableCell className="w-5">
-                <AlertDialogDemo billId={bill.id} />
+                <ConfirmDialog
+                  title="Are you absolutely sure?"
+                  description={`This action cannot be undone.`}
+                  action={removeBill.bind(null, bill.id)}
+                />
               </TableCell>
             </TableRow>
           ))}

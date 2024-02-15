@@ -56,7 +56,7 @@ export const {
           if (!isUser) {
             const newUser = {
               id: Number(profile?.id),
-              email: profile?.email!,
+              email: profile?.email ?? "",
               password: "github user",
             };
 

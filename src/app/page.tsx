@@ -6,7 +6,6 @@ import Link from "next/link";
 
 export default async function Home() {
   const session = await auth();
-  const userId = session?.user.id;
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4">

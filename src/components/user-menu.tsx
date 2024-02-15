@@ -8,11 +8,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/lib/auth/actions";
-import { Cat } from "lucide-react";
+
 import { User } from "next-auth";
 
 export function UserMenu({ user }: { user: User | undefined }) {
   const userImage = user?.image as string;
+
+  const userInitials = user?.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("");
 
   return (
     <DropdownMenu>
@@ -20,18 +25,16 @@ export function UserMenu({ user }: { user: User | undefined }) {
         {user && (
           <Avatar>
             <AvatarImage src={userImage} alt="user" />
-            <AvatarFallback>
-              <Cat />
-            </AvatarFallback>
+            <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
         )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My account</DropdownMenuLabel>
+        <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuSeparator />  */}
         <DropdownMenuItem>
           <form action={logout}>
             <button type="submit">Logout</button>
