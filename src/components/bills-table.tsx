@@ -10,7 +10,7 @@ import {
 import { GroupDataProps } from "@/drizzle/data-access";
 import { removeBill } from "@/lib/actions/bill-actions";
 import { formatDate } from "@/lib/utils";
-import { ConfirmDialog } from "./confirm-dialog";
+import { RemoveActionDialog } from "./remove-action-dialog";
 
 export default function BillsTable({ group }: { group: GroupDataProps }) {
   return (
@@ -59,7 +59,7 @@ export default function BillsTable({ group }: { group: GroupDataProps }) {
               </TableCell>
               <TableCell className="text-right">{bill.amount}</TableCell>
               <TableCell className="w-5">
-                <ConfirmDialog
+                <RemoveActionDialog
                   title="Are you absolutely sure?"
                   description={`This action cannot be undone.`}
                   action={removeBill.bind(null, bill.id)}

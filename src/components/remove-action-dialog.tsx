@@ -12,17 +12,17 @@ import {
 import { X } from "lucide-react";
 import { Button } from "./ui/button";
 
-type ConfirmDialogProps = {
+type RemoveActionDialog = {
   title: string;
   description: string;
   action: () => void;
 };
 
-export function ConfirmDialog({
+export function RemoveActionDialog({
   title,
   description,
   action,
-}: ConfirmDialogProps) {
+}: RemoveActionDialog) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

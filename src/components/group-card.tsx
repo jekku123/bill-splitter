@@ -9,7 +9,8 @@ import {
 import { GroupDataProps } from "@/drizzle/data-access";
 import { removeGroupAction } from "@/lib/actions/group-actions";
 import Link from "next/link";
-import { ConfirmDialog } from "./confirm-dialog";
+
+import { RemoveActionDialog } from "./remove-action-dialog";
 import { Button } from "./ui/button";
 import { TypographyH3 } from "./ui/typography";
 
@@ -19,7 +20,7 @@ export default async function GroupCard({ group }: { group: GroupDataProps }) {
       <CardHeader>
         <div className="flex w-full items-center justify-between gap-2">
           <CardTitle>{group.title}</CardTitle>
-          <ConfirmDialog
+          <RemoveActionDialog
             title="Delete group"
             description="Are you sure? This action cannot be undone."
             action={removeGroupAction.bind(null, group.id)}
