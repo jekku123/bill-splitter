@@ -9,7 +9,11 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4">
-      <TypographyLead>Hello, {session && session.user.name}! ❤️</TypographyLead>
+      <TypographyLead>
+        Hello,{" "}
+        {session && session.user.name ? session.user.name : session?.user.email}
+        ! ❤️
+      </TypographyLead>
       <TypographyH1 className="text-center font-bold md:text-6xl lg:text-7xl">
         Welcome to Bill Splitter!
       </TypographyH1>

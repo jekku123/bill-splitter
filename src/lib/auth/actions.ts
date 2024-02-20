@@ -18,7 +18,7 @@ export const githubLogin = async () => {
 
 export async function register(values: RegisterFormValues) {
   try {
-    const { username, email, password } = registerFormSchema.parse(values);
+    const { email, password } = registerFormSchema.parse(values);
 
     const isEmailTaken = await getUserByEmail(email);
 
@@ -34,7 +34,7 @@ export async function register(values: RegisterFormValues) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await insertUser({ username, email, password: hashedPassword });
+    await insertUser({ email, password: hashedPassword });
 
     return {
       success: true,
@@ -48,7 +48,6 @@ export async function register(values: RegisterFormValues) {
       return {
         success: false,
         errors: {
-          username: errorMap["username"]?.[0] ?? "",
           email: errorMap["email"]?.[0] ?? "",
           password: errorMap["password"]?.[0] ?? "",
           confirmPassword: errorMap["confirmPassword"]?.[0] ?? "",

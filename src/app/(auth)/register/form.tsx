@@ -33,7 +33,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const defaultValues = {
-  username: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -53,12 +52,7 @@ export default function RegisterForm() {
     if (result.errors) {
       const errors = result.errors;
 
-      if (errors.username) {
-        form.setError("username", {
-          message: errors.username,
-          type: "server",
-        });
-      } else if (errors.email) {
+      if (errors.email) {
         form.setError("email", {
           message: errors.email,
           type: "server",
@@ -95,27 +89,6 @@ export default function RegisterForm() {
       <CardContent className="grid gap-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      className={
-                        !!form.formState.errors.username
-                          ? "border-destructive focus-visible:ring-destructive"
-                          : ""
-                      }
-                      autoFocus
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="email"

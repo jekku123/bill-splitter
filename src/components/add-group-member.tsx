@@ -23,6 +23,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { addGroupMemberAction } from "@/lib/actions/group-actions";
@@ -92,25 +93,27 @@ export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
               control={control}
               name="username"
               render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className={cn(
-                        "",
-                        !!errors.username
-                          ? "border-destructive focus-visible:ring-destructive"
-                          : "",
-                      )}
-                      autoFocus
-                      placeholder="Name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
+                <FormItem className="grid w-full grid-cols-4 items-center gap-4">
+                  <FormLabel className="text-right">Name</FormLabel>
+                  <div className="col-span-3 flex flex-col gap-1">
+                    <FormControl>
+                      <Input
+                        className={cn(
+                          "",
+                          !!errors.username
+                            ? "border-destructive focus-visible:ring-destructive"
+                            : "",
+                        )}
+                        autoFocus
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
-            <div className="flex w-full justify-end gap-4">
+            <div className="mt-2 flex w-full justify-end gap-4">
               <Button
                 variant="default"
                 type="submit"

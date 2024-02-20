@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -51,10 +52,12 @@ export default function GroupCardList({ groups }: GroupCardListProps) {
                 {group.groupMembers.map((member) => member.username).join(", ")}
               </div>
             )}
+          </CardContent>
+          <CardFooter>
             <Button asChild className="mt-3 w-full">
               <Link href={`/groups/${group.id}`}>View group</Link>
             </Button>
-          </CardContent>
+          </CardFooter>
         </Card>
       ))}
     </ul>

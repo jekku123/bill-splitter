@@ -22,7 +22,7 @@ export async function SettleUp({ group }: { group: GroupDataProps }) {
         <ul>
           {debts?.at(0) ? (
             debts.map((debt, idx) => (
-              <li key={idx} className="flex gap-2">
+              <li key={idx} className="flex flex-wrap gap-2">
                 <span>{debt.debtor.username}</span>
                 <ArrowRight />
                 <span>{debt.creditor.username}</span>
