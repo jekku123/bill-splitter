@@ -17,3 +17,5 @@ App to keep track of the expenses of a group of people and the debts between the
 - Drizzle
 - NextAuth.js
 - Zod
+
+[Live demo](bill-splitter-topaz.vercel.app)
