@@ -49,7 +49,7 @@ export async function createBill(
       };
     }
 
-    values.payments.forEach(async (payment) => {
+    const paymentsPromise = values.payments.map(async (payment) => {
       await insertPayment({
         billId: newBill[0].billId,
         payerId: Number(payment.payerId),
@@ -57,13 +57,15 @@ export async function createBill(
       });
     });
 
-    values.shares.forEach(async (share) => {
+    const sharesPromise = values.shares.map(async (share) => {
       await insertShare({
         billId: newBill[0].billId,
         groupMemberId: Number(share.groupMemberId),
         amount: share.amount,
       });
     });
+
+    await Promise.all([...paymentsPromise, ...sharesPromise]);
 
     revalidatePath(`/groups/${groupId}`);
 
