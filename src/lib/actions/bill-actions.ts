@@ -49,23 +49,21 @@ export async function createBill(
       };
     }
 
-    const paymentsPromise = values.payments.map(async (payment) => {
+    for (const payment of values.payments) {
       await insertPayment({
         billId: newBill[0].billId,
         payerId: Number(payment.payerId),
         amount: payment.amount,
       });
-    });
+    }
 
-    const sharesPromise = values.shares.map(async (share) => {
+    for (const share of values.shares) {
       await insertShare({
         billId: newBill[0].billId,
         groupMemberId: Number(share.groupMemberId),
         amount: share.amount,
       });
-    });
-
-    await Promise.all([...paymentsPromise, ...sharesPromise]);
+    }
 
     revalidatePath(`/groups/${groupId}`);
 
@@ -83,6 +81,7 @@ export async function createBill(
         errors: {
           title: errorMap["title"]?.[0] ?? "",
           description: errorMap["description"]?.[0] ?? "",
+          // TODO: add payments and shares errors
         },
       };
     }
