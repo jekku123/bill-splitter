@@ -5,8 +5,8 @@ import { ZodError } from "zod";
 import {
   deleteBill,
   insertBill,
-  insertPayment,
-  insertShare,
+  insertPayments,
+  insertShares,
 } from "../../drizzle/data-access";
 import { NewBill } from "../../drizzle/schema";
 import { BillFormValues, billFormSchema } from "../zod/bill-form";
@@ -49,21 +49,20 @@ export async function createBill(
       };
     }
 
-    for (const payment of values.payments) {
-      await insertPayment({
+    await insertPayments(
+      validatedValues.payments.map((payment) => ({
         billId: newBill[0].billId,
         payerId: Number(payment.payerId),
         amount: payment.amount,
-      });
-    }
-
-    for (const share of values.shares) {
-      await insertShare({
+      })),
+    );
+    await insertShares(
+      validatedValues.shares.map((share) => ({
         billId: newBill[0].billId,
         groupMemberId: Number(share.groupMemberId),
         amount: share.amount,
-      });
-    }
+      })),
+    );
 
     revalidatePath(`/groups/${groupId}`);
 

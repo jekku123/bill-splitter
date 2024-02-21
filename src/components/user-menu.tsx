@@ -11,7 +11,6 @@ import { logout } from "@/lib/auth/actions";
 import { UserRound } from "lucide-react";
 
 import { User } from "next-auth";
-import Link from "next/link";
 
 export function UserMenu({ user }: { user: User | undefined }) {
   const userImage = user?.image as string;
@@ -41,9 +40,6 @@ export function UserMenu({ user }: { user: User | undefined }) {
         <DropdownMenuSeparator />
         {/* <DropdownMenuItem>Profile</DropdownMenuItem>
         <DropdownMenuSeparator />  */}
-        <DropdownMenuItem>
-          <Link href={`/profile`}>Profile</Link>
-        </DropdownMenuItem>
         <DropdownMenuItem>
           <form action={logout}>
             <button type="submit">Logout</button>
