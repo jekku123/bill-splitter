@@ -14,9 +14,11 @@ export default async function Header() {
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
         <div className="flex w-1/3 items-center">
           <MobileMenu className="z-50 flex sm:hidden" />
-          <TypographyH3 className="hidden text-2xl font-bold sm:flex">
-            Bill Splitter
-          </TypographyH3>
+          <Link href="/">
+            <TypographyH3 className="hidden text-2xl font-bold sm:flex">
+              Bill Splitter
+            </TypographyH3>
+          </Link>
         </div>
         <Nav />
 
