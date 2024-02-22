@@ -1,4 +1,4 @@
-# Bill Splitter
+# Bill Splitter ![Vercel Deploy](https://therealsujitk-vercel-badge.vercel.app/?app=bill-splitter-topaz&style=for-the-badge)
 
 App to keep track of the expenses of a group of people and the debts between them during trips, dinner meetings, etc.
 
