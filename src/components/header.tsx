@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth/auth";
 import Link from "next/link";
+import { MainMenu } from "./main-menu";
 import { MobileMenu } from "./mobile-menu";
 import { ModeToggle } from "./mode-toggle";
 import { TypographyH3 } from "./ui/typography";
@@ -20,30 +21,12 @@ export default async function Header() {
             </TypographyH3>
           </Link>
         </div>
-        <Nav />
+        <MainMenu />
         <div className="flex w-1/3 items-center justify-end space-x-4">
           <UserMenu user={user} />
           <ModeToggle />
         </div>
       </div>
     </header>
-  );
-}
-
-function Nav() {
-  return (
-    <nav className="hidden w-1/3 flex-shrink-0 justify-center md:flex ">
-      <ul className="flex gap-4">
-        <li>
-          <Link href="/">Home</Link>
-        </li>
-        <li>
-          <Link href="/groups">Groups</Link>
-        </li>
-        <li>
-          <Link href="/bills">Bills</Link>
-        </li>
-      </ul>
-    </nav>
   );
 }
