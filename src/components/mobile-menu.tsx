@@ -8,6 +8,7 @@ import { useState } from "react";
 const tabs = [
   { id: 1, label: "Home", href: "/" },
   { id: 2, label: "Groups", href: "/groups" },
+  { id: 3, label: "Bills", href: "/bills" },
 ];
 
 const variants = {

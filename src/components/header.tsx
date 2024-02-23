@@ -21,7 +21,6 @@ export default async function Header() {
           </Link>
         </div>
         <Nav />
-
         <div className="flex w-1/3 items-center justify-end space-x-4">
           <UserMenu user={user} />
           <ModeToggle />
@@ -40,6 +39,9 @@ function Nav() {
         </li>
         <li>
           <Link href="/groups">Groups</Link>
+        </li>
+        <li>
+          <Link href="/bills">Bills</Link>
         </li>
       </ul>
     </nav>

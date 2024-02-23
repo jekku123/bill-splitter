@@ -16,7 +16,7 @@ export default async function GroupsPage() {
 
   return (
     <div className="flex w-full flex-col items-center gap-10">
-      <TypographyH1 className="text-7xl font-bold">Groups</TypographyH1>
+      <TypographyH1>Groups</TypographyH1>
       <CreateGroupDialog user={session.user} />
       {groups ? <GroupCardList groups={groups} /> : <p>No groups found</p>}
     </div>
