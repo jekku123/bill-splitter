@@ -1,7 +1,7 @@
-import CreateGroupDialog from "@/components/create-group-form";
+import CreateGroupDialog from "@/app/groups/create-group-form";
 import { auth } from "@/lib/auth/auth";
 
-import GroupCardList from "@/components/group-card-list";
+import GroupCardList from "@/app/groups/group-card-list";
 import { TypographyH1 } from "@/components/ui/typography";
 import { getGroupsByUserId } from "@/drizzle/db";
 

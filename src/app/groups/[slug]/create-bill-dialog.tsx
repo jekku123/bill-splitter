@@ -14,8 +14,8 @@ import { useState } from "react";
 
 import { GroupDataProps } from "@/drizzle/data-access";
 import { Plus } from "lucide-react";
+import { Separator } from "../../../components/ui/separator";
 import { CreateBillForm } from "./create-bill-form";
-import { Separator } from "./ui/separator";
 
 export default function CreateBillDialog({ group }: { group: GroupDataProps }) {
   const [open, setOpen] = useState(false);

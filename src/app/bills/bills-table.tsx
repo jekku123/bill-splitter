@@ -17,6 +17,7 @@ import { formatDate } from "@/lib/utils";
 
 import { useState } from "react";
 
+import { ViewBillDialog } from "@/app/bills/view-bill-dialog";
 import {
   Select,
   SelectContent,
@@ -24,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ViewBillDialog } from "@/components/view-bill-dialog";
 
 export default function BillsTable({ groups }: { groups: GroupDataProps[] }) {
   const [selectedGroup, setSelectedGroup] = useState<string>("all");

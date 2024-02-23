@@ -10,7 +10,7 @@ import {
 import { GroupDataProps } from "@/drizzle/data-access";
 import { removeBill } from "@/lib/actions/bill-actions";
 import { formatDate } from "@/lib/utils";
-import { RemoveActionDialog } from "./remove-action-dialog";
+import { RemoveActionDialog } from "../../../components/remove-action-dialog";
 
 export default function BillsTable({ group }: { group: GroupDataProps }) {
   return (
@@ -25,6 +25,7 @@ export default function BillsTable({ group }: { group: GroupDataProps }) {
             <TableHead>Paid by</TableHead>
             <TableHead>Participants</TableHead>
             <TableHead className="text-right">Amount</TableHead>
+            <TableHead className="w-5" />
           </TableRow>
         </TableHeader>
         <TableBody>

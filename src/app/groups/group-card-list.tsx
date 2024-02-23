@@ -12,9 +12,9 @@ import { GroupDataProps } from "@/drizzle/data-access";
 import { removeGroupAction } from "@/lib/actions/group-actions";
 import Link from "next/link";
 import { useOptimistic } from "react";
-import { RemoveActionDialog } from "./remove-action-dialog";
-import { Button } from "./ui/button";
-import { TypographyH3 } from "./ui/typography";
+import { RemoveActionDialog } from "../../components/remove-action-dialog";
+import { Button } from "../../components/ui/button";
+import { TypographyH3 } from "../../components/ui/typography";
 
 type GroupCardListProps = {
   groups: GroupDataProps[];

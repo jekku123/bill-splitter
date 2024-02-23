@@ -33,7 +33,7 @@ import { toast } from "sonner";
 import { createGroupAction } from "@/lib/actions/group-actions";
 import { cn } from "@/lib/utils";
 import { GroupFormValues, groupFormSchema } from "@/lib/zod/group-form";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../../components/ui/textarea";
 
 export default function CreateGroupDialog({ user }: { user: User }) {
   const [open, setOpen] = useState(false);

@@ -1,11 +1,11 @@
-import AddGroupMemberDialog from "@/components/add-group-member";
-import BillsTable from "@/components/bills-table";
-import CreateBillDialog from "@/components/create-bill-dialog";
-import GroupTotals from "@/components/group-totals";
-import MembersCard from "@/components/members-card";
-import { SettleUp } from "@/components/settle-up";
+import AddGroupMemberDialog from "@/app/groups/[slug]/add-group-member";
+import BillsTable from "@/app/groups/[slug]/bills-table";
+import CreateBillDialog from "@/app/groups/[slug]/create-bill-dialog";
+import GroupTotals from "@/app/groups/[slug]/group-totals";
+import MembersCard from "@/app/groups/[slug]/members-card";
+import { SettleUp } from "@/app/groups/[slug]/settle-up";
+import UserTotal from "@/app/groups/[slug]/user-total";
 import { TypographyH1 } from "@/components/ui/typography";
-import UserTotal from "@/components/user-total";
 import { getGroup } from "@/drizzle/db";
 import { auth } from "@/lib/auth/auth";
 import { resolveMemberTotals } from "@/lib/utils";

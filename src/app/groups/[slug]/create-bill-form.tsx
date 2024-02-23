@@ -30,10 +30,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { Separator } from "./ui/separator";
-import { Textarea } from "./ui/textarea";
-import { TypographyH4 } from "./ui/typography";
+} from "../../../components/ui/select";
+import { Separator } from "../../../components/ui/separator";
+import { Textarea } from "../../../components/ui/textarea";
+import { TypographyH4 } from "../../../components/ui/typography";
 
 // TODO HEHE
 
