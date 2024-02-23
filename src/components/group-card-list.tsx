@@ -35,7 +35,7 @@ export default function GroupCardList({ groups }: GroupCardListProps) {
             <div className="flex w-full items-center justify-between gap-2">
               <CardTitle>{group.title}</CardTitle>
               <RemoveActionDialog
-                title="Delete group"
+                title={`Delete group ${group.title}`}
                 description="Are you sure? This action cannot be undone."
                 action={async () => {
                   removeOptimisticGroup(group.id);

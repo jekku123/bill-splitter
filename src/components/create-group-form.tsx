@@ -151,7 +151,7 @@ export default function CreateGroupDialog({ user }: { user: User }) {
                 disabled={isSubmitting}
                 aria-disabled={isSubmitting}
               >
-                Save
+                Create
                 {isSubmitting && (
                   <Icons.spinner className="ml-2 animate-spin" />
                 )}

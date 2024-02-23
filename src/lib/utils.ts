@@ -15,15 +15,13 @@ export function formatDate(date: Date): string {
   });
 }
 
-export function formatDateComplete(input: string, locale: string): string {
-  const date = new Date(input);
-  return date.toLocaleDateString(locale, {
+export function formatDateComplete(date: Date): string {
+  return date.toLocaleDateString("en-us", {
     month: "long",
     day: "numeric",
     year: "numeric",
     hour: "numeric",
     minute: "numeric",
-    timeZone: "UTC",
     timeZoneName: "short",
     hour12: false,
   });

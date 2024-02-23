@@ -391,7 +391,7 @@ export function CreateBillForm({
             disabled={isSubmitting}
             aria-disabled={isSubmitting}
           >
-            Save
+            Add Bill
             {isSubmitting && <Icons.spinner className="ml-2 animate-spin" />}
           </Button>
           <DialogClose asChild>
