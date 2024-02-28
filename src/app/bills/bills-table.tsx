@@ -83,7 +83,7 @@ export default function BillsTable({ groups }: { groups: GroupDataProps[] }) {
                 return (
                   <TableRow key={bill.id}>
                     <TableCell className="font-medium">{group.title}</TableCell>
-                    <TableCell>{bill.description}</TableCell>
+                    <TableCell>{bill.title}</TableCell>
                     <TableCell>{formatDate(bill.createdAt)}</TableCell>
                     <TableCell>
                       {group.groupMembers

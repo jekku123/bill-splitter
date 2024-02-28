@@ -1,3 +1,4 @@
+import { createDummyGroup } from "@/drizzle/create-dummyGroup";
 import Credentials from "@auth/core/providers/credentials";
 import GitHub from "@auth/core/providers/github";
 import { compare } from "bcrypt";
@@ -61,6 +62,7 @@ export const {
             };
 
             await insertUser(newUser);
+            await createDummyGroup(newUser.id);
           }
         } catch (err) {
           console.error(err);

@@ -1,5 +1,3 @@
-import { reduceMemberTotals } from "@/lib/utils";
-import { MemberTotal } from "@/types/types";
 import { and, eq } from "drizzle-orm";
 import { db } from ".";
 import {
@@ -28,8 +26,10 @@ import {
 
 // User data access functions
 
-export async function insertUser(user: NewUser): Promise<void> {
-  await db.insert(users).values(user);
+export async function insertUser(user: NewUser): Promise<{ id: number }[]> {
+  return await db.insert(users).values(user).returning({
+    id: users.id,
+  });
 }
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
@@ -225,16 +225,4 @@ export async function getSharesByGroupMember(
 
 export async function deleteShare(shareId: number): Promise<void> {
   await db.delete(shares).where(eq(shares.id, shareId));
-}
-
-export async function getMemberTotals(groupId: number): Promise<MemberTotal[]> {
-  const res = await db.query.groupMembers.findMany({
-    where: eq(groupMembers.groupId, groupId),
-    with: {
-      payments: true,
-      shares: true,
-    },
-  });
-
-  return res.map((member) => reduceMemberTotals(member));
 }

@@ -1,5 +1,6 @@
 "use server";
 
+import { createDummyGroup } from "@/drizzle/create-dummyGroup";
 import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
 import { ZodError } from "zod";
@@ -34,7 +35,9 @@ export async function register(values: RegisterFormValues) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await insertUser({ email, password: hashedPassword });
+    const userId = await insertUser({ email, password: hashedPassword });
+
+    await createDummyGroup(userId[0].id);
 
     return {
       success: true,
