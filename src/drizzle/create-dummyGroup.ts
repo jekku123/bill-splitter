@@ -2,7 +2,6 @@ import { db } from ".";
 import { bills, groupMembers, groups, payments, shares } from "./schema";
 
 export async function createDummyGroup(creatorId: number) {
-  // update later
   try {
     const group = await db
       .insert(groups)

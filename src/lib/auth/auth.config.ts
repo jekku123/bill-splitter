@@ -23,8 +23,9 @@ export const authConfig = {
       const isOnLoginPage = request.nextUrl?.pathname.startsWith("/login");
       const isOnRegisterPage =
         request.nextUrl?.pathname.startsWith("/register");
+      const isLandingPage = request.nextUrl?.pathname === "/";
 
-      // ONLY UNAUTHENTICATED USERS CAN REACH THE REGISTER AND LOGIN PAGE
+      // RESTRICTED PAGES FROM AUTHENTICATED USERS
 
       if (isOnLoginPage && user) {
         return Response.redirect(new URL("/", request.nextUrl));
@@ -34,9 +35,13 @@ export const authConfig = {
         return Response.redirect(new URL("/", request.nextUrl));
       }
 
-      // ALLOW UNAUTHENTICATED USERS TO REACH THE REGISTER AND LOGIN PAGE
+      // ALLOWED PAGES FOR UNAUTHENTICATED USERS
 
       if (isOnLoginPage || isOnRegisterPage) {
+        return true;
+      }
+
+      if (isLandingPage) {
         return true;
       }
 
