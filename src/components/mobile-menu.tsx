@@ -5,10 +5,22 @@ import Link from "next/link";
 
 import { useState } from "react";
 
-const tabs = [
-  { id: 1, label: "Home", href: "/" },
+const menuItems = [
   { id: 2, label: "Groups", href: "/groups" },
   { id: 3, label: "Bills", href: "/bills" },
+];
+
+const unAuthenticatedMenuItems = [
+  {
+    id: 1,
+    label: "Login",
+    href: "/login",
+  },
+  {
+    id: 2,
+    label: "Register",
+    href: "/register",
+  },
 ];
 
 const variants = {
@@ -36,7 +48,13 @@ const itemVariants = {
   },
 };
 
-export function MobileMenu({ className }: { className: string }) {
+export function MobileMenu({
+  className,
+  isLoggedIn,
+}: {
+  className: string;
+  isLoggedIn: boolean;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -97,22 +115,39 @@ export function MobileMenu({ className }: { className: string }) {
               className="flex h-full w-full flex-col items-center justify-center gap-5 "
               variants={variants}
             >
-              {tabs.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col items-center gap-4"
-                  onClick={() => setOpen(false)}
-                >
-                  <motion.div
-                    className="hover:text-primary-accent text-3xl"
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Link href={item.href}>{item.label}</Link>
-                  </motion.div>
-                </div>
-              ))}
+              {isLoggedIn
+                ? menuItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex flex-col items-center gap-4"
+                      onClick={() => setOpen(false)}
+                    >
+                      <motion.div
+                        className="hover:text-primary-accent text-3xl"
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Link href={item.href}>{item.label}</Link>
+                      </motion.div>
+                    </div>
+                  ))
+                : unAuthenticatedMenuItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex flex-col items-center gap-4"
+                      onClick={() => setOpen(false)}
+                    >
+                      <motion.div
+                        className="hover:text-primary-accent text-3xl"
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Link href={item.href}>{item.label}</Link>
+                      </motion.div>
+                    </div>
+                  ))}
             </motion.div>
           </motion.div>
         )}

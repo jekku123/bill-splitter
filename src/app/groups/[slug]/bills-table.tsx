@@ -1,3 +1,4 @@
+import { ViewBillDialog } from "@/app/bills/view-bill-dialog";
 import {
   Table,
   TableBody,
@@ -59,12 +60,16 @@ export default function BillsTable({ group }: { group: GroupDataProps }) {
                   .join(", ")}
               </TableCell>
               <TableCell className="text-right">{bill.amount}</TableCell>
-              <TableCell className="w-5">
-                <RemoveActionDialog
-                  title="Are you absolutely sure?"
-                  description={`This action cannot be undone.`}
-                  action={removeBill.bind(null, bill.id)}
-                />
+
+              <TableCell className="">
+                <div className="flex items-center gap-4">
+                  <ViewBillDialog bill={bill} group={group} />
+                  <RemoveActionDialog
+                    title={`Delete bill ${bill.title}?`}
+                    description={`Are you sure? This action cannot be undone.`}
+                    action={removeBill.bind(null, bill.id)}
+                  />
+                </div>
               </TableCell>
             </TableRow>
           ))}

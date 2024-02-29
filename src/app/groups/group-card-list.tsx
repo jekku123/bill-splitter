@@ -55,7 +55,7 @@ export default function GroupCardList({ groups }: GroupCardListProps) {
           </CardContent>
           <CardFooter>
             <Button asChild className="mt-3 w-full">
-              <Link href={`/groups/${group.id}`}>View group</Link>
+              <Link href={`/groups/${group.id}`}>Manage group</Link>
             </Button>
           </CardFooter>
         </Card>
