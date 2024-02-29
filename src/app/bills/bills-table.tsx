@@ -68,7 +68,7 @@ export default function BillsTable({ groups }: { groups: GroupDataProps[] }) {
           <TableCaption>List of bills</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Group</TableHead>
+              <TableHead>Group</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Paid by</TableHead>
