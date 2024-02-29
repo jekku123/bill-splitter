@@ -28,7 +28,7 @@ export default function GroupCardList({ groups }: GroupCardListProps) {
   );
 
   return (
-    <ul className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <ul className="mx-auto grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {optimisticGroups.map((group) => (
         <Card key={group.id} className="relative w-full">
           <CardHeader>

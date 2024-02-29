@@ -24,7 +24,7 @@ export default async function RootLayout({
         <Providers>
           <div className="flex min-h-screen flex-col">
             <Header />
-            <main className="mx-auto flex w-full max-w-5xl grow px-6 py-9">
+            <main className="mx-auto flex w-full max-w-6xl grow px-6 py-4 md:py-9">
               {children}
             </main>
             <Toaster />

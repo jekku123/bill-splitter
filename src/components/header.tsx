@@ -12,7 +12,7 @@ export default async function Header() {
 
   return (
     <header className="w-full flex-shrink-0">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
         <div className="flex w-1/3 items-center">
           <MobileMenu className="z-50 flex sm:hidden" />
           <Link href="/">
