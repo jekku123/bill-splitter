@@ -31,13 +31,18 @@ export default async function Home() {
         `
           : `
           Bill Splitter is a simple app to help you split the bills with your
-          friends.
+          friends and family.
         `}
       </TypographyP>
       {session ? (
-        <Button className="mt-2" asChild>
-          <Link href="/groups">Go to Groups</Link>
-        </Button>
+        <div className="mt-2 flex gap-4">
+          <Button asChild>
+            <Link href="/groups">Groups</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/bills">Bills</Link>
+          </Button>
+        </div>
       ) : (
         <div className="mt-2 flex gap-4">
           <Button asChild>
