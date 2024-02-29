@@ -26,11 +26,11 @@ export async function createDummyGroup(creatorId: number) {
       },
       {
         groupId: group[0].id,
-        username: "Jane Doe",
+        username: "Tarzan",
       },
       {
         groupId: group[0].id,
-        username: "John Smith",
+        username: "Jane",
       },
     ];
 
@@ -40,6 +40,10 @@ export async function createDummyGroup(creatorId: number) {
       .returning({
         id: groupMembers.id,
       });
+
+    if (!dummyMembers) {
+      throw new Error("Members not created");
+    }
 
     const dummyBillsSchema = [
       {
@@ -68,6 +72,10 @@ export async function createDummyGroup(creatorId: number) {
       .returning({
         id: bills.id,
       });
+
+    if (!dummyBills) {
+      throw new Error("Bills not created");
+    }
 
     const dummyPaymentsSchema = [
       {

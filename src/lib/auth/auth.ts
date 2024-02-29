@@ -1,4 +1,4 @@
-import { createDummyGroup } from "@/drizzle/create-dummyGroup";
+import { createDummyGroup } from "@/drizzle/create-dummy-group";
 import Credentials from "@auth/core/providers/credentials";
 import GitHub from "@auth/core/providers/github";
 import { compare } from "bcrypt";

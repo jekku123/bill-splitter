@@ -1,6 +1,6 @@
 "use server";
 
-import { createDummyGroup } from "@/drizzle/create-dummyGroup";
+import { createDummyGroup } from "@/drizzle/create-dummy-group";
 import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
 import { ZodError } from "zod";
