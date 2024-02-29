@@ -185,7 +185,7 @@ export default function RegisterForm() {
       <CardFooter>
         <p className="w-full text-center">
           Already have an account?{" "}
-          <Link href="/login" className="hover:underline">
+          <Link href="/login" className="underline">
             Login
           </Link>
         </p>

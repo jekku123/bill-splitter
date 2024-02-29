@@ -141,7 +141,7 @@ export function LoginForm() {
       <CardFooter>
         <p className="w-full text-center">
           Dont have an account?{" "}
-          <Link href="/register" className="hover:underline">
+          <Link href="/register" className="underline">
             Register
           </Link>
         </p>

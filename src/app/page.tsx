@@ -1,5 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { TypographyH1, TypographyLead } from "@/components/ui/typography";
+import {
+  TypographyH1,
+  TypographyLead,
+  TypographyP,
+} from "@/components/ui/typography";
 
 import { auth } from "@/lib/auth/auth";
 import Link from "next/link";
@@ -9,16 +13,18 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4">
-      {session && (
+      {session ? (
         <TypographyLead>
           Hello!, {session.user.name ? session.user.name : session?.user.email}{" "}
           ❤️
         </TypographyLead>
+      ) : (
+        <TypographyLead>Hello, Stranger! ❤️</TypographyLead>
       )}
       <TypographyH1 className="text-center font-bold md:text-6xl lg:text-7xl">
         Welcome to Bill Splitter
       </TypographyH1>
-      <TypographyLead className="mx-auto max-w-lg text-center">
+      <TypographyP className="mx-auto max-w-lg text-center text-xl">
         {session
           ? `
         You can now start splitting bills with your friends and family.
@@ -27,18 +33,18 @@ export default async function Home() {
           Bill Splitter is a simple app to help you split the bills with your
           friends.
         `}
-      </TypographyLead>
+      </TypographyP>
       {session ? (
         <Button className="mt-2" asChild>
           <Link href="/groups">Go to Groups</Link>
         </Button>
       ) : (
-        <div className="flex gap-4">
+        <div className="mt-2 flex gap-4">
           <Button asChild>
             <Link href="/register">Register</Link>
           </Button>
-          <Button asChild>
-            <Link href="/login">Sign in</Link>
+          <Button variant="outline" asChild>
+            <Link href="/login">Login</Link>
           </Button>
         </div>
       )}
