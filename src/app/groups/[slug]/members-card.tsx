@@ -7,13 +7,7 @@ import {
   CardTitle,
 } from "../../../components/ui/card";
 
-export default function MembersCard({
-  groupId,
-  members,
-}: {
-  groupId: number;
-  members: GroupMember[];
-}) {
+export default function MembersCard({ members }: { members: GroupMember[] }) {
   return (
     <Card>
       <CardHeader>

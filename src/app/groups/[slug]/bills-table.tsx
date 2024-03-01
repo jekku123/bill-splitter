@@ -1,3 +1,5 @@
+"use client";
+
 import { ViewBillDialog } from "@/app/bills/view-bill-dialog";
 import {
   Table,
@@ -11,9 +13,17 @@ import {
 import { GroupDataProps } from "@/drizzle/data-access";
 import { removeBill } from "@/lib/actions/bill-actions";
 import { formatDate } from "@/lib/utils";
+import { BillType } from "@/types/types";
+import { useOptimistic } from "react";
 import { RemoveActionDialog } from "../../../components/remove-action-dialog";
 
 export default function BillsTable({ group }: { group: GroupDataProps }) {
+  const [optimisticBills, handleOptimisticBills] = useOptimistic(
+    group.bills,
+    (state: BillType[], billId: number) =>
+      state.filter((bill) => bill.id !== billId),
+  );
+
   return (
     <div className="w-full rounded-md border pb-4">
       <Table>
@@ -30,7 +40,7 @@ export default function BillsTable({ group }: { group: GroupDataProps }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {group.bills.map((bill) => (
+          {optimisticBills.map((bill) => (
             <TableRow key={bill.id}>
               <TableCell className="font-medium">{bill.title}</TableCell>
               <TableCell>{bill.description}</TableCell>
@@ -65,10 +75,15 @@ export default function BillsTable({ group }: { group: GroupDataProps }) {
                 <div className="flex items-center gap-4">
                   <ViewBillDialog bill={bill} group={group} />
                   <RemoveActionDialog
-                    title={`Delete bill ${bill.title}?`}
-                    description={`Are you sure? This action cannot be undone.`}
-                    action={removeBill.bind(null, bill.id)}
+                    title={`Delete bill ${bill.title}`}
+                    description="Are you sure? This action cannot be undone."
+                    action={async () => {
+                      handleOptimisticBills(bill.id);
+                      console.log("optimistically removed bill", bill.id);
+                      await removeBill(bill.id);
+                    }}
                   />
+                  ;
                 </div>
               </TableCell>
             </TableRow>

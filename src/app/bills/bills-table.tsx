@@ -29,10 +29,6 @@ import {
 export default function BillsTable({ groups }: { groups: GroupDataProps[] }) {
   const [selectedGroup, setSelectedGroup] = useState<string>("all");
 
-  const handleGroupSelect = (value: string) => {
-    setSelectedGroup(value);
-  };
-
   const filteredGroups =
     selectedGroup === "all"
       ? groups
@@ -48,7 +44,7 @@ export default function BillsTable({ groups }: { groups: GroupDataProps[] }) {
   return (
     <div className="w-full">
       <div className="flex items-center gap-4">
-        <Select onValueChange={handleGroupSelect}>
+        <Select onValueChange={(value) => setSelectedGroup(value)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Choose group" />
           </SelectTrigger>
