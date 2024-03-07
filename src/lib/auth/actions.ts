@@ -4,8 +4,14 @@ import { createDummyGroup } from "@/drizzle/create-dummy-group";
 import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
 import { ZodError } from "zod";
-import { getUserByEmail, insertUser } from "../../drizzle/data-access";
+import {
+  getUserByEmail,
+  getUserById,
+  insertUser,
+  updateUserById,
+} from "../../drizzle/data-access";
 import { LoginFormValues } from "../zod/login-form";
+import { ProfileFormValues, profileFormSchema } from "../zod/profile-form";
 import { RegisterFormValues, registerFormSchema } from "../zod/register-form";
 import { signIn, signOut } from "./auth";
 
@@ -84,5 +90,77 @@ export async function login(values: LoginFormValues) {
       }
     }
     throw err;
+  }
+}
+
+export async function updateProfile(id: number, values: ProfileFormValues) {
+  try {
+    const { username, password } = profileFormSchema.parse(values);
+
+    const user = await getUserById(id);
+
+    if (!user) {
+      return {
+        success: false,
+        errors: {
+          message: "User not found",
+        },
+      };
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return {
+        success: false,
+        errors: {
+          password: "Password is incorrect",
+        },
+      };
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const updatedUser = await updateUserById(id, {
+      email: user.email,
+      username,
+      password: hashedPassword,
+    });
+
+    if (!updatedUser) {
+      return {
+        success: false,
+        errors: {
+          message:
+            "Could not update profile at this time. Please try again later.",
+        },
+      };
+    }
+
+    return {
+      success: true,
+      errors: undefined,
+    };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      const zodError = error as ZodError;
+      const errorMap = zodError.flatten().fieldErrors;
+
+      return {
+        success: false,
+        errors: {
+          email: errorMap["email"]?.[0] ?? "",
+          username: errorMap["username"]?.[0] ?? "",
+        },
+      };
+    }
+    return {
+      success: false,
+      errors: {
+        message:
+          "Could not update profile at this time. Please try again later.",
+      },
+    };
   }
 }

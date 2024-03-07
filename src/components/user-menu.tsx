@@ -17,8 +17,9 @@ export function UserMenu({ user }: { user: User | undefined }) {
 
   const userInitials = user?.name
     ?.split(" ")
-    .map((n) => n[0])
-    .join("");
+    .map((n) => n[0].toUpperCase())
+    .join("")
+    .slice(0, 2);
 
   return (
     <DropdownMenu>
@@ -38,8 +39,10 @@ export function UserMenu({ user }: { user: User | undefined }) {
           {user?.name ? user.name : user?.email}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {/* <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuSeparator />  */}
+        {/* <DropdownMenuItem>
+          <Link href="/profile">Profile</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator /> */}
         <DropdownMenuItem>
           <form action={logout}>
             <button type="submit">Logout</button>

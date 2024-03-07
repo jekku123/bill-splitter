@@ -39,7 +39,7 @@ export default async function Home() {
           <Button asChild>
             <Link href="/groups">Groups</Link>
           </Button>
-          <Button variant="outline" asChild>
+          <Button variant="secondary" asChild>
             <Link href="/bills">Bills</Link>
           </Button>
         </div>
@@ -48,7 +48,7 @@ export default async function Home() {
           <Button asChild>
             <Link href="/register">Register</Link>
           </Button>
-          <Button variant="outline" asChild>
+          <Button variant="secondary" asChild>
             <Link href="/login">Login</Link>
           </Button>
         </div>

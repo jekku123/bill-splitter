@@ -44,8 +44,15 @@ export async function getUserById(userId: number): Promise<User | undefined> {
   });
 }
 
-export async function updateUser(userId: number, user: NewUser): Promise<void> {
-  await db.update(users).set(user).where(eq(users.id, userId));
+export async function updateUserById(
+  userId: number,
+  user: NewUser,
+): Promise<User[]> {
+  return await db
+    .update(users)
+    .set(user)
+    .where(eq(users.id, userId))
+    .returning();
 }
 
 // Group data access functions
