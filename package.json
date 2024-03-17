@@ -10,7 +10,8 @@
     "generate": "drizzle-kit generate:pg",
     "push": "drizzle-kit push:pg",
     "migrate": "tsx ./src/lib/migrate.ts",
-    "studio": "drizzle-kit studio"
+    "studio": "drizzle-kit studio",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
