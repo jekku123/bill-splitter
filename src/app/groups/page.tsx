@@ -2,7 +2,7 @@ import CreateGroupDialog from "@/app/groups/create-group-form";
 import { auth } from "@/lib/auth/auth";
 
 import GroupCardList from "@/app/groups/group-card-list";
-import { TypographyH1, TypographyP } from "@/components/ui/typography";
+import { TypographyH1 } from "@/components/ui/typography";
 import { getGroupsByUserId } from "@/drizzle/db";
 
 export default async function GroupsPage() {
@@ -16,11 +16,12 @@ export default async function GroupsPage() {
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <TypographyH1>Groups</TypographyH1>
-      <TypographyP className="max-w-lg text-center">
-        Here you can see all your groups. You can also create a new group.
-      </TypographyP>
-      <CreateGroupDialog user={session.user} />
+      <div className="flex w-full flex-col justify-between gap-4 sm:flex-row">
+        <TypographyH1>Groups</TypographyH1>
+        <div className="flex items-center gap-4">
+          <CreateGroupDialog user={session.user} />
+        </div>
+      </div>
       {groups ? <GroupCardList groups={groups} /> : <p>No groups found</p>}
     </div>
   );

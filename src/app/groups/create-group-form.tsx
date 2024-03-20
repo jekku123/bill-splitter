@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import { createGroupAction } from "@/lib/actions/group-actions";
 import { cn } from "@/lib/utils";
 import { GroupFormValues, groupFormSchema } from "@/lib/zod/group-form";
+import { Plus } from "lucide-react";
 import { Textarea } from "../../components/ui/textarea";
 
 export default function CreateGroupDialog({ user }: { user: User }) {
@@ -85,9 +86,14 @@ export default function CreateGroupDialog({ user }: { user: User }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Create Group</Button>
-      </DialogTrigger>
+      <div className="flex items-center gap-2">
+        <span className="">Add Group</span>
+        <DialogTrigger asChild>
+          <Button size="icon" variant="outline" className="rounded-full">
+            <Plus />
+          </Button>
+        </DialogTrigger>
+      </div>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create Group</DialogTitle>

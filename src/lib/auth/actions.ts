@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { AuthError } from "next-auth";
 import { ZodError } from "zod";
 import {
+  deleteUser,
   getUserByEmail,
   getUserById,
   insertUser,
@@ -90,6 +91,35 @@ export async function login(values: LoginFormValues) {
       }
     }
     throw err;
+  }
+}
+
+export async function removeAccount(id: number) {
+  try {
+    const deletedUser = await deleteUser(id);
+
+    if (!deletedUser.at(0)) {
+      return {
+        success: false,
+        errors: {
+          message:
+            "Could not delete account at this time. Please try again later",
+        },
+      };
+    }
+
+    return {
+      success: true,
+      errors: undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      errors: {
+        message:
+          "Could not delete account at this time. Please try again later",
+      },
+    };
   }
 }
 

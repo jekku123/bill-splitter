@@ -26,12 +26,16 @@ export const users = pgTable(
 );
 
 export const usersRelations = relations(users, ({ many }) => ({
-  groups: many(groups),
+  groups: many(groups, {
+    relationName: "user_groups",
+  }),
 }));
 
 export const groups = pgTable("groups", {
   id: serial("id").primaryKey(),
-  creatorId: integer("creator_id").notNull(),
+  creatorId: integer("creator_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -43,6 +47,7 @@ export const groupsRelations = relations(groups, ({ one, many }) => ({
   creator: one(users, {
     fields: [groups.creatorId],
     references: [users.id],
+    relationName: "user_groups",
   }),
   groupMembers: many(groupMembers, {
     relationName: "groupMembers",

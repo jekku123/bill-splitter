@@ -37,11 +37,9 @@ export function RemoveActionDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction className="px-0">
-            <form action={action}>
-              <Button variant="ghost">Continue</Button>
-            </form>
-          </AlertDialogAction>
+          <form action={action}>
+            <AlertDialogAction type="submit">Continue</AlertDialogAction>
+          </form>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

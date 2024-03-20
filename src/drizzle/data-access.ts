@@ -32,6 +32,12 @@ export async function insertUser(user: NewUser): Promise<{ id: number }[]> {
   });
 }
 
+export async function deleteUser(userId: number) {
+  return await db.delete(users).where(eq(users.id, userId)).returning({
+    id: users.id
+  })
+}
+
 export async function getUserByEmail(email: string): Promise<User | undefined> {
   return await db.query.users.findFirst({
     where: eq(users.email, email),
