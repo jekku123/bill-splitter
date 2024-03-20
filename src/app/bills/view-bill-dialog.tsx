@@ -83,11 +83,14 @@ export function ViewBillDialog({
       <DialogContent className="max-h-screen overflow-y-auto sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">{bill.title}</DialogTitle>
-          <DialogDescription>
-            <p className="underline">{formatDateComplete(bill.createdAt)}</p>
-            <p className="mt-1">{bill.description}</p>
+          <DialogDescription className="underline">
+            {formatDateComplete(bill.createdAt)}
+          </DialogDescription>
+          <DialogDescription className="pt-1">
+            {bill.description}
           </DialogDescription>
         </DialogHeader>
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Card className="w-full">
             <CardHeader>
