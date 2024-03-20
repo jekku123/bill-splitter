@@ -28,6 +28,7 @@ import { useForm } from "react-hook-form";
 import GitHubLogin from "@/components/ui/github-login";
 import { login } from "@/lib/auth/actions";
 import { LoginFormValues, loginFormSchema } from "@/lib/zod/login-form";
+import { useRouter } from "next/navigation";
 
 const defaultValues = {
   email: "",
@@ -35,6 +36,7 @@ const defaultValues = {
 };
 
 export function LoginForm() {
+  const router = useRouter();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues,
@@ -45,12 +47,11 @@ export function LoginForm() {
   async function onSubmit(values: LoginFormValues) {
     try {
       const result = await login(values);
-
       if (!result.success) {
         setGeneralError(result.error as string);
       }
     } catch (error) {
-      // Error coming from successful login
+      // Error coming from successful login, why live like this?
     }
   }
 
@@ -59,7 +60,7 @@ export function LoginForm() {
       <CardHeader className="space-y-2 text-center">
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>Login in to access the app</CardDescription>
-        <span className="text-red-500">{generalError}</span>
+        <span className="text-destructive">{generalError}</span>
       </CardHeader>
       <CardContent className="grid gap-4">
         <Form {...form}>

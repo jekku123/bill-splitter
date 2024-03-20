@@ -23,9 +23,9 @@ export default function CreateBillDialog({ group }: { group: GroupDataProps }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <div className="flex items-center gap-2">
-        <span className="">Add Bill</span>
         <DialogTrigger asChild>
-          <Button size="icon" variant="outline" className="rounded-full">
+          <Button variant="outline" className="gap-2">
+            <span className="">Add Bill</span>
             <Plus />
           </Button>
         </DialogTrigger>

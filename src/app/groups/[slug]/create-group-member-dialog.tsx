@@ -32,7 +32,11 @@ import { MemberFormValues, memberFormSchema } from "@/lib/zod/member-form";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
-export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
+export default function CreateGroupMemberDialog({
+  groupId,
+}: {
+  groupId: number;
+}) {
   const [open, setOpen] = useState(false);
 
   const form = useForm<MemberFormValues>({
@@ -75,9 +79,9 @@ export default function AddGroupMemberDialog({ groupId }: { groupId: number }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <div className="flex items-center gap-2">
-        <span className="">Add Member</span>
         <DialogTrigger asChild>
-          <Button size="icon" variant="outline" className="rounded-full">
+          <Button variant="outline" className="gap-2">
+            <span className="">Add Member</span>
             <Plus />
           </Button>
         </DialogTrigger>

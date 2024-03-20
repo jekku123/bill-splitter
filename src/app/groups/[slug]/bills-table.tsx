@@ -15,6 +15,7 @@ import { removeBill } from "@/lib/actions/bill-actions";
 import { formatDate } from "@/lib/utils";
 import { BillType } from "@/types/types";
 import { useOptimistic } from "react";
+import { toast } from "sonner";
 import { RemoveActionDialog } from "../../../components/remove-action-dialog";
 
 export default function BillsTable({ group }: { group: GroupDataProps }) {
@@ -79,11 +80,14 @@ export default function BillsTable({ group }: { group: GroupDataProps }) {
                     description="Are you sure? This action cannot be undone."
                     action={async () => {
                       handleOptimisticBills(bill.id);
-                      console.log("optimistically removed bill", bill.id);
-                      await removeBill(bill.id);
+                      const removed = await removeBill(bill.id);
+                      if (removed.success) {
+                        toast.success(`Bill ${bill.title} has been removed`);
+                      } else {
+                        toast.error(`Could not remove bill ${bill.title}`);
+                      }
                     }}
                   />
-                  ;
                 </div>
               </TableCell>
             </TableRow>

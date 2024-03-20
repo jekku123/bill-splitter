@@ -46,7 +46,7 @@ export default function BillsTable({ groups }: { groups: GroupDataProps[] }) {
       <div className="flex items-center gap-4">
         <Select onValueChange={(value) => setSelectedGroup(value)}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Choose group" />
+            <SelectValue placeholder="Select group" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All</SelectItem>

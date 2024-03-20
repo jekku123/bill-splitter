@@ -1,6 +1,6 @@
-import AddGroupMemberDialog from "@/app/groups/[slug]/add-group-member";
 import BillsTable from "@/app/groups/[slug]/bills-table";
 import CreateBillDialog from "@/app/groups/[slug]/create-bill-dialog";
+import CreateGroupMemberDialog from "@/app/groups/[slug]/create-group-member-dialog";
 import GroupTotals from "@/app/groups/[slug]/group-totals";
 import MembersCard from "@/app/groups/[slug]/members-card";
 import { SettleUp } from "@/app/groups/[slug]/settle-up";
@@ -42,7 +42,7 @@ export default async function GroupPage({
         <TypographyH1>{group?.title}</TypographyH1>
         <div className="flex items-center gap-4">
           <CreateBillDialog group={group} />
-          <AddGroupMemberDialog groupId={group.id} />
+          <CreateGroupMemberDialog groupId={group.id} />
         </div>
       </div>
       <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

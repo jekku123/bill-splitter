@@ -12,6 +12,7 @@ import { GroupDataProps } from "@/drizzle/data-access";
 import { removeGroupAction } from "@/lib/actions/group-actions";
 import Link from "next/link";
 import { useOptimistic } from "react";
+import { toast } from "sonner";
 import { RemoveActionDialog } from "../../components/remove-action-dialog";
 import { Button } from "../../components/ui/button";
 import { TypographyH3 } from "../../components/ui/typography";
@@ -39,7 +40,14 @@ export default function GroupCardList({ groups }: GroupCardListProps) {
                 description="Are you sure? This action cannot be undone."
                 action={async () => {
                   removeOptimisticGroup(group.id);
-                  await removeGroupAction(group.id);
+                  const removed = await removeGroupAction(group.id);
+                  if (removed.success) {
+                    toast.success(`
+                      Group ${group.title} has been removed`);
+                  } else {
+                    toast.error(`
+                      Could not remove group ${group.title}`);
+                  }
                 }}
               />
             </div>
