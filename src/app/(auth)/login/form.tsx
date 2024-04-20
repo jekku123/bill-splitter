@@ -28,7 +28,6 @@ import { useForm } from "react-hook-form";
 import GitHubLogin from "@/components/ui/github-login";
 import { login } from "@/lib/auth/actions";
 import { LoginFormValues, loginFormSchema } from "@/lib/zod/login-form";
-import { useRouter } from "next/navigation";
 
 const defaultValues = {
   email: "",
@@ -36,7 +35,6 @@ const defaultValues = {
 };
 
 export function LoginForm() {
-  const router = useRouter();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues,
@@ -60,11 +58,17 @@ export function LoginForm() {
       <CardHeader className="space-y-2 text-center">
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>Login in to access the app</CardDescription>
-        <span className="text-destructive">{generalError}</span>
+        <span className="text-destructive" data-test-id="login-error">
+          {generalError}
+        </span>
       </CardHeader>
       <CardContent className="grid gap-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid gap-4"
+            data-test-id="login-form"
+          >
             <FormField
               control={form.control}
               name="email"
@@ -80,6 +84,7 @@ export function LoginForm() {
                       }
                       autoFocus
                       {...field}
+                      data-test-id="login-email"
                     />
                   </FormControl>
                   <FormMessage />
@@ -101,6 +106,7 @@ export function LoginForm() {
                           : ""
                       }
                       {...field}
+                      data-test-id="login-password"
                     />
                   </FormControl>
                   <FormMessage />
@@ -113,6 +119,7 @@ export function LoginForm() {
               className="my-4 w-full"
               disabled={form.formState.isSubmitting}
               aria-disabled={form.formState.isSubmitting}
+              data-test-id="login-submit"
             >
               Login
               {form.formState.isSubmitting && (

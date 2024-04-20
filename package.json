@@ -11,7 +11,9 @@
     "push": "drizzle-kit push:pg",
     "migrate": "tsx ./src/lib/migrate.ts",
     "studio": "drizzle-kit studio",
-    "prepare": "husky"
+    "prepare": "husky",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -56,6 +58,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "cypress": "^13.8.0",
     "drizzle-kit": "^0.20.14",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",

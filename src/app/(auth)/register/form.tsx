@@ -88,7 +88,11 @@ export default function RegisterForm() {
       </CardHeader>
       <CardContent className="grid gap-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid gap-4"
+            data-test-id="register-form"
+          >
             <FormField
               control={form.control}
               name="email"
@@ -103,6 +107,7 @@ export default function RegisterForm() {
                           : ""
                       }
                       {...field}
+                      data-test-id="register-email"
                     />
                   </FormControl>
                   <FormMessage />
@@ -124,6 +129,7 @@ export default function RegisterForm() {
                           : ""
                       }
                       {...field}
+                      data-test-id="register-password"
                     />
                   </FormControl>
                   <FormMessage />
@@ -145,6 +151,7 @@ export default function RegisterForm() {
                           : ""
                       }
                       {...field}
+                      data-test-id="register-confirm-password"
                     />
                   </FormControl>
                   <FormMessage />
@@ -156,6 +163,7 @@ export default function RegisterForm() {
               className="my-4 w-full"
               disabled={form.formState.isSubmitting}
               aria-disabled={form.formState.isSubmitting}
+              data-test-id="register-submit"
             >
               Create account
               {form.formState.isSubmitting && (

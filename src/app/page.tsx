@@ -45,10 +45,10 @@ export default async function Home() {
         </div>
       ) : (
         <div className="mt-2 flex gap-4">
-          <Button asChild>
+          <Button asChild data-test-id="register-button">
             <Link href="/register">Register</Link>
           </Button>
-          <Button variant="secondary" asChild>
+          <Button variant="secondary" asChild data-test-id="login-button">
             <Link href="/login">Login</Link>
           </Button>
         </div>

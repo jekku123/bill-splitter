@@ -15,7 +15,7 @@ export default async function Header() {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
         <div className="flex w-1/3 items-center">
           <MobileMenu isLoggedIn={!!user} className="z-50 flex sm:hidden" />
-          <Link href="/">
+          <Link href="/" data-test-id="site-title">
             <TypographyH3 className="hidden text-2xl font-bold sm:flex">
               Bill Splitter
             </TypographyH3>
