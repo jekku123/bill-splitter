@@ -14,7 +14,7 @@ import {
 import { LoginFormValues } from "../zod/login-form";
 import { ProfileFormValues, profileFormSchema } from "../zod/profile-form";
 import { RegisterFormValues, registerFormSchema } from "../zod/register-form";
-import { signIn, signOut } from "./auth";
+import { auth, signIn, signOut } from "./auth";
 
 export async function logout() {
   await signOut();
@@ -96,6 +96,26 @@ export async function login(values: LoginFormValues) {
 
 export async function removeAccount(id: number) {
   try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        success: false,
+        errors: {
+          message: "Not logged in",
+        },
+      };
+    }
+
+    if (Number(session.user.id) !== id) {
+      return {
+        success: false,
+        errors: {
+          message: "Unauthorized",
+        },
+      };
+    }
+
     const deletedUser = await deleteUser(id);
 
     if (!deletedUser.at(0)) {

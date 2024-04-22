@@ -26,6 +26,7 @@ import {
 import { User } from "next-auth";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { toast } from "sonner";
 
 const formState = {
   success: false,
@@ -40,7 +41,6 @@ export function UserMenu({ user }: { user: User | undefined }) {
   );
 
   const userImage = user?.image as string;
-
   const userInitials = user?.name
     ?.split(" ")
     .map((n) => n[0].toUpperCase())
@@ -48,10 +48,13 @@ export function UserMenu({ user }: { user: User | undefined }) {
     .slice(0, 2);
 
   useEffect(() => {
+    if (state.errors) {
+      toast.error(state.errors.message);
+    }
     if (state.success) {
       logout();
     }
-  }, [state.success]);
+  }, [state]);
 
   return (
     <>
