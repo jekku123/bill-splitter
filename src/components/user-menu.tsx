@@ -58,7 +58,7 @@ export function UserMenu({ user }: { user: User | undefined }) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger data-test-id="user-menu">
           {user && (
             <Avatar>
               <AvatarImage src={userImage} alt="user" />
@@ -79,7 +79,10 @@ export function UserMenu({ user }: { user: User | undefined }) {
               <button type="submit">Logout</button>
             </form>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem
+            onClick={() => setOpen(true)}
+            data-test-id="delete-user-trigger"
+          >
             Delete Account
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -137,7 +140,7 @@ export function DeleteUserDialog({
                 <FormItem>
                   <FormLabel>Type &quot;Delete&quot; to confirm</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input data-test-id="delete-user-confirm" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -146,7 +149,11 @@ export function DeleteUserDialog({
 
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <Button type="submit" variant="destructive">
+              <Button
+                type="submit"
+                variant="destructive"
+                data-test-id="delete-user-button"
+              >
                 Delete
               </Button>
             </AlertDialogFooter>
