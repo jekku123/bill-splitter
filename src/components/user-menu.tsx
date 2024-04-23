@@ -14,7 +14,6 @@ import { UserRound } from "lucide-react";
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -23,22 +22,31 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import { User } from "next-auth";
-import { useEffect, useState } from "react";
-import { useFormState } from "react-dom";
-import { toast } from "sonner";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-const formState = {
-  success: false,
-  errors: undefined,
-};
+import { zodResolver } from "@hookform/resolvers/zod";
+import { User } from "next-auth";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+
+export const deleteSchema = z.object({
+  confirm: z.string().refine((v) => v === "Delete", {
+    message: "Please type 'Delete' to confirm",
+  }),
+});
 
 export function UserMenu({ user }: { user: User | undefined }) {
   const [open, setOpen] = useState(false);
-  const [state, formAction] = useFormState(
-    removeAccount.bind(null, +user?.id!),
-    formState,
-  );
 
   const userImage = user?.image as string;
   const userInitials = user?.name
@@ -47,34 +55,8 @@ export function UserMenu({ user }: { user: User | undefined }) {
     .join("")
     .slice(0, 2);
 
-  useEffect(() => {
-    if (state.errors) {
-      toast.error(state.errors.message);
-    }
-    if (state.success) {
-      logout();
-    }
-  }, [state]);
-
   return (
     <>
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Account?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <form action={formAction}>
-              <AlertDialogAction type="submit">Continue</AlertDialogAction>
-            </form>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       <DropdownMenu>
         <DropdownMenuTrigger>
           {user && (
@@ -97,12 +79,80 @@ export function UserMenu({ user }: { user: User | undefined }) {
               <button type="submit">Logout</button>
             </form>
           </DropdownMenuItem>
-
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            Remove Account
+            Delete Account
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <DeleteUserDialog
+        userId={Number(user?.id)}
+        open={open}
+        setOpen={setOpen}
+      />
     </>
+  );
+}
+
+export function DeleteUserDialog({
+  userId,
+  open,
+  setOpen,
+}: {
+  userId: number;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) {
+  const form = useForm<z.infer<typeof deleteSchema>>({
+    resolver: zodResolver(deleteSchema),
+    defaultValues: {
+      confirm: "",
+    },
+  });
+
+  async function onSubmit() {
+    try {
+      await removeAccount(userId);
+      await logout();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Account?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure? This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="confirm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type &quot;Delete&quot; to confirm</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button type="submit" variant="destructive">
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
